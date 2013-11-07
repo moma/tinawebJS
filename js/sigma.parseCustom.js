@@ -168,7 +168,7 @@ function onepartiteExtract(){
                 node.attributes = atts;
             }
             node.id=id;
-            node.type = "Document";
+            node.type = catSoc;
             //if(node.attributes[0].attr=="weight"){
             node.size=parseInt(node.attributes["weight"]);
             //}
@@ -397,14 +397,14 @@ function fullExtract(){
             nodecat=node.attributes["category"];
             nodew=parseInt(node.attributes["weight"]);
             if( nodecat===categoriesIndex[1]){
-                node.type="Document";
+                node.type=catSoc;
                 node.shape="square";
                 numberOfDocs++;
                 //node.size=desirableScholarSize;
                 node.size=nodew;
             }
             else {
-                node.type="NGram";
+                node.type=catSem;
                 numberOfNGrams++;
                 node.size=nodew;
             }      
@@ -420,7 +420,7 @@ function fullExtract(){
     for(var i in Nodes){
         normalizedSize=desirableNodeSizeMIN+(Nodes[i].size-1)*((desirableNodeSizeMAX-desirableNodeSizeMIN)/(parseInt(maxNodeSize)-parseInt(minNodeSize)));
         Nodes[i].size = ""+normalizedSize;
-        if(Nodes[i].type=="NGram") {
+        if(Nodes[i].type==catSem) {
             nodeK = Nodes[i];
             nodeK.hidden=true;
             partialGraph.addNode(i,nodeK);  
@@ -484,7 +484,6 @@ function fullExtract(){
             //pr(idS+";"+idT);
             if(idS=="D" && idT=="D"){
                 edge.label="nodes1";
-                
                 if( (typeof partialGraph._core.graph.edgesIndex[target+";"+source])=="undefined" ){
                     edge.hidden=false;
                 }
@@ -508,10 +507,11 @@ function fullExtract(){
 //                }
 //                else nodes1[target].neighbours.push(source);
             }
-            
-            
+//            
+//            
             if(idS=="N" && idT=="N"){
                 edge.label="nodes2";
+                //pr("nodes2");
                 edge.hidden=true;
                 if((typeof nodes2[source])=="undefined"){                    
                     nodes2[source] = {
@@ -522,10 +522,11 @@ function fullExtract(){
                 }
                 else nodes2[source].neighbours.push(target);
             }
-            
-            
-            if((idS=="D" && idT=="N")||(idS=="N" && idT=="D")){                 
+//            
+//            
+            if((idS=="D" && idT=="N")||(idS=="N" && idT=="D")){
                 edge.label="bipartite";
+                //pr("bipartite");
                 edge.hidden=true;
                 // Document to NGram 
                 if((typeof bipartiteD2N[source])=="undefined"){   

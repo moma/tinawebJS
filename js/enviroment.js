@@ -450,11 +450,11 @@ function updateNodeFilter(nodeFilterName) {
     nodeType="";
     divName="";
     if(nodeFilterName=="social"){
-        nodeType="Document";
+        nodeType=catSoc;
         divName="#sliderANodeWeight";
     }
     else {
-        nodeType="NGram";
+        nodeType=catSem;
         divName="#sliderBNodeWeight";
     }
     nodes=partialGraph._core.graph.nodes.filter(function(n) {
@@ -462,13 +462,13 @@ function updateNodeFilter(nodeFilterName) {
           });
     nodesBySize=[];
     for(var i in nodes){
-        if(Nodes[nodes[i].id].type=="Document"){
+        if(Nodes[nodes[i].id].type==catSoc){
             if(typeof(nodesBySize[nodes[i].degree])=="undefined"){
                 nodesBySize[nodes[i].degree]=[];
             }
             nodesBySize[nodes[i].degree].push(nodes[i].id);
         }
-        if(Nodes[nodes[i].id].type=="NGram"){
+        if(Nodes[nodes[i].id].type==catSem){
             if(typeof(nodesBySize[nodes[i].size])=="undefined"){
                 nodesBySize[nodes[i].size]=[];
             }
@@ -521,13 +521,13 @@ function updateBothNodeFilters() {
     nodesSortedBySize=[];
     
     for(var i in nodes){
-        if(Nodes[nodes[i].id].type=="Document"){
+        if(Nodes[nodes[i].id].type==catSoc){
             if(typeof(scholarsNodesBySize[nodes[i].degree])=="undefined"){
                 scholarsNodesBySize[nodes[i].degree]=[];
             }
             scholarsNodesBySize[nodes[i].degree].push(nodes[i].id);
         }
-        if(Nodes[nodes[i].id].type=="NGram"){
+        if(Nodes[nodes[i].id].type==catSem){
             if(typeof(keywordsNodesBySize[nodes[i].size])=="undefined"){
                 keywordsNodesBySize[nodes[i].size]=[];
             }
@@ -601,110 +601,6 @@ function updateBothNodeFilters() {
     });
 }
 
-//Almost Empty
-function alertCheckBox(eventCheck){
-    //pr("\tin alertCheckbox");
-    //De-activate previous Binds
-    //partialGraph.unbind("overnodes");
-    //partialGraph.unbind("outnodes");
-    
-    if((typeof eventCheck.checked)!="undefined") checkBox=eventCheck.checked;
-    
-    if(eventCheck.checked==true) {//Fade nodes on Hover  
-    // Bind events :
-    //        console.log("checkbox true");
-    //        var greyColor = '#9b9e9e';
-    //        partialGraph.bind('overnodes',function(event){
-    //            
-    //            overNodes = true;
-    //            
-    //            var nodes = event.content;
-    //            var neighbors = {};
-    //            var e = partialGraph._core.graph.edges; 
-    //            for(i=0;i<e.length;i++){
-    //                if(nodes.indexOf(e[i].source.id)<0 && nodes.indexOf(e[i].target.id)<0){
-    //                    if(!e[i].attr['grey']){
-    //                        e[i].attr['true_color'] = e[i].color;
-    //                        var greyColor
-    //                        e[i].color = greyColor;
-    //                        e[i].attr['grey'] = 1;
-    //                    }
-    //                }else{
-    //                    e[i].color = e[i].attr['grey'] ? e[i].attr['true_color'] : e[i].color;
-    //                    e[i].attr['grey'] = 0;
-    //
-    //                    neighbors[e[i].source.id] = 1;
-    //                    neighbors[e[i].target.id] = 1;
-    //                }
-    //            }
-    //            partialGraph.draw(2,1,2);
-    //            
-    //            partialGraph.iterNodes(function(n){
-    //                if(!neighbors[n.id]){
-    //                    if(!n.attr['grey']){
-    //                        n.attr['true_color'] = n.color;
-    //                        n.color = greyColor;
-    //                        n.attr['grey'] = 1;
-    //                    }
-    //                }else{
-    //                    n.color = n.attr['grey'] ? n.attr['true_color'] : n.color;
-    //                    n.attr['grey'] = 0;
-    //                }
-    //            }).draw(2,1,2);
-    //        });
-    //        
-    //        partialGraph.bind('outnodes',function(){
-    //            overNodes=false;            
-    //            var e = partialGraph._core.graph.edges;
-    //            for(i=0;i<e.length;i++){
-    //                e[i].color = e[i].attr['grey'] ? e[i].attr['true_color'] : e[i].color;
-    //                e[i].attr['grey'] = 0;
-    //            }
-    //            partialGraph.draw(2,1,2);
-    //            
-    //            partialGraph.iterNodes(function(n){
-    //                n.color = n.attr['grey'] ? n.attr['true_color'] : n.color;
-    //                n.attr['grey'] = 0;
-    //            }).draw(2,1,2);
-    //        });
-    }
-    else {//Hide nodes on Hover     
-        console.log("checkbox false");   
-    //        partialGraph.bind('overnodes',function(event){            
-    //            var nodes = event.content;
-    //            var neighbors = {};
-    //            var e = partialGraph._core.graph.edges;
-    //            for(i=0;i<e.length;i++){
-    //                if(nodes.indexOf(e[i].source.id)>=0 || nodes.indexOf(e[i].target.id)>=0){
-    //                    neighbors[e[i].source.id] = 1;
-    //                    neighbors[e[i].target.id] = 1;
-    //                }
-    //            }
-    //            partialGraph.draw(2,1,2);
-    //            
-    //            partialGraph.iterNodes(function(n){
-    //                if(!neighbors[n.id]){
-    //                    n.hidden = 1;
-    //                }else{
-    //                    n.hidden = 0;
-    //                }
-    //            }).draw(2,1,2);
-    //        });
-    //  
-    //        partialGraph.bind('outnodes',function(){
-    //            var e = partialGraph._core.graph.edges;
-    //            for(i=0;i<e.length;i++){
-    //                e[i].hidden = 0;
-    //            }
-    //            partialGraph.draw(2,1,2);
-    //            
-    //            partialGraph.iterNodes(function(n){
-    //                n.hidden = 0;
-    //            }).draw(2,1,2);
-    //        });
-    } 
-    
-}
 //=========================== </ FILTERS-SLIDERS > ===========================//
 
 
@@ -779,7 +675,9 @@ function search(string) {
         }
     });
     getOpossitesNodes(id_node, false);
-    updateLeftPanel();
+    
+    if(categoriesIndex.length==1) updateLeftPanel_uni();
+    if(categoriesIndex.length==2) updateLeftPanel(); 
     
             /****            
                  *This give me the hoverNodes effect when the FA2 is running.

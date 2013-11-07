@@ -102,12 +102,13 @@ function returnBaseUrl(){
     return origin+pathname;
 }
 
-
 function cancelSelection (fromTagCloud) {
     pr("\t***in cancelSelection");
     highlightSelectedNodes(false); //Unselect the selected ones :D
     opossites = [];
     selections = [];
+    //selections.length = 0;
+    selections.splice(0, selections.length);
     partialGraph.refresh();
     
     
@@ -130,10 +131,12 @@ function cancelSelection (fromTagCloud) {
     
     if(fromTagCloud==false){
         $("#names").html(""); 
+        $("#topPapers").html(""); $("#topPapers").hide();
         $("#opossiteNodes").html("");
         $("#information").html("");
         $("#searchinput").val("");
         $("#switchbutton").hide();
+        $("#tips").html(getTips());
     }
 }
 
@@ -141,11 +144,11 @@ function highlightSelectedNodes(flag){
     if(!is_empty(selections)){            
         fullurl = returnBaseUrl()+"img/trans/"; 
         for(var i in selections) {
-            if(Nodes[i].type=="Document" && document.getElementById("socio").src==fullurl+"active_scholars.png"){
+            if(Nodes[i].type==catSoc && document.getElementById("socio").src==fullurl+"active_scholars.png"){
                 node = partialGraph._core.graph.nodesIndex[i];
                 node.active = flag;
             }
-            else if(Nodes[i].type=="NGram" && document.getElementById("semantic").src==fullurl+"active_tags.png") {
+            else if(Nodes[i].type==catSem && document.getElementById("semantic").src==fullurl+"active_tags.png") {
                 node = partialGraph._core.graph.nodesIndex[i];
                 node.active = flag;
             }
@@ -177,7 +180,7 @@ function selection(currentNode){
     if(socsemFlag==false){
         if((typeof selections[currentNode.id])=="undefined"){
             selections[currentNode.id] = 1;
-            if(Nodes[currentNode.id].type=="Document" && (typeof bipartiteD2N[currentNode.id])!="undefined"){
+            if(Nodes[currentNode.id].type==catSoc && (typeof bipartiteD2N[currentNode.id])!="undefined"){
                 for(i=0;i<bipartiteD2N[currentNode.id].neighbours.length;i++) {
                     if((typeof opossites[bipartiteD2N[currentNode.id].neighbours[i]])=="undefined"){
                         opossites[bipartiteD2N[currentNode.id].neighbours[i]]=1;
@@ -187,7 +190,7 @@ function selection(currentNode){
                     }
                 }
             }  
-            if(Nodes[currentNode.id].type=="NGram"){
+            if(Nodes[currentNode.id].type==catSem){
                 if((typeof bipartiteN2D[currentNode.id])!="undefined"){
                     for(i=0;i<bipartiteN2D[currentNode.id].neighbours.length;i++) {
                         if((typeof opossites[bipartiteN2D[currentNode.id].neighbours[i]])=="undefined"){
@@ -203,7 +206,7 @@ function selection(currentNode){
         else {
             delete selections[currentNode.id];        
             markAsSelected(currentNode.id,false);
-            if(Nodes[currentNode.id].type=="Document"){
+            if(Nodes[currentNode.id].type==catSoc){
                 for(i=0;i<bipartiteD2N[currentNode.id].neighbours.length;i++) {
                     if((typeof opossites[bipartiteD2N[currentNode.id].neighbours[i]])=="undefined") {
                         console.log("lala");
@@ -216,7 +219,7 @@ function selection(currentNode){
                     }
                 }
             }    
-            if(Nodes[currentNode.id].type=="NGram"){
+            if(Nodes[currentNode.id].type==catSem){
                 for(i=0;i<bipartiteN2D[currentNode.id].neighbours.length;i++) {
                     if((typeof opossites[bipartiteN2D[currentNode.id].neighbours[i]])=="undefined") {
                         console.log("lala");
@@ -240,7 +243,7 @@ function selection(currentNode){
         if((typeof selections[currentNode.id])=="undefined"){
             selections[currentNode.id] = 1;
         
-            if(Nodes[currentNode.id].type=="Document"){
+            if(Nodes[currentNode.id].type==catSoc){
                 for(i=0;i<bipartiteD2N[currentNode.id].neighbours.length;i++) {
                     //opossitesbipartiteD2N[currentNode.id].neighbours[i]];
                     if((typeof opossites[bipartiteD2N[currentNode.id].neighbours[i].toString()])=="undefined"){
@@ -251,7 +254,7 @@ function selection(currentNode){
                     }
                 }
             }    
-            if(Nodes[currentNode.id].type=="NGram"){
+            if(Nodes[currentNode.id].type==catSem){
                 for(i=0;i<nodes2[currentNode.id].neighbours.length;i++) {
                     if((typeof opossites[nodes2[currentNode.id].neighbours[i]])=="undefined"){
                         opossites[nodes2[currentNode.id].neighbours[i]]=1;
@@ -267,7 +270,7 @@ function selection(currentNode){
             delete selections[currentNode.id];
             markAsSelected(currentNode.id,false);
             
-            if(Nodes[currentNode.id].type=="Document"){
+            if(Nodes[currentNode.id].type==catSoc){
                 for(i=0;i<bipartiteD2N[currentNode.id].neighbours.length;i++) {
                     if((typeof opossites[bipartiteD2N[currentNode.id].neighbours[i]])=="undefined") {
                         console.log("lala");
@@ -280,7 +283,7 @@ function selection(currentNode){
                     }
                 }
             }    
-            if(Nodes[currentNode.id].type=="NGram"){
+            if(Nodes[currentNode.id].type==catSem){
                 for(i=0;i<nodes2[currentNode.id].neighbours.length;i++) {
                     if((typeof opossites[nodes2[currentNode.id].neighbours[i]])=="undefined") {
                         console.log("lala");
@@ -385,26 +388,7 @@ function updateLeftPanel(){
         }
         opossitesNodes += '</div>';
         
-        params=[];
-        for(var i in selections){
-            params.push(Nodes[i].label);
-        }
-        jsonparams=JSON.stringify(params);
-        jsonparams = jsonparams.replace("&","__and__");
-        pr(jsonparams);
-        $.ajax({
-            type: 'GET',
-            url: 'php/test.php',
-            data: "type=social&query="+jsonparams,
-            //contentType: "application/json",
-            //dataType: 'json',
-            success : function(data){ 
-                $("#topPapers").html(data);
-            },
-            error: function(){ 
-                pr('Page Not found: updateLeftPanel(), if(swclickActual=="social")');
-            }
-        });
+        getTopPapers("social");
         
         information += '<br><h4>Information:</h4>';
         information += '<ul>';
@@ -446,24 +430,8 @@ function updateLeftPanel(){
         }
         opossitesNodes+='</div>';
         
-        params=[];
-        for(var i in selections){
-            params.push(Nodes[i].label);
-        }
-        jsonparams=JSON.stringify(params);
-        $.ajax({
-            type: 'GET',
-            url: 'php/test.php',
-            data: "type=semantic&query="+jsonparams,
-            //contentType: "application/json",
-            //dataType: 'json',
-            success : function(data){ 
-                $("#topPapers").html(data);
-            },
-            error: function(){ 
-                pr('Page Not found: updateLeftPanel(), if(swclickActual=="semantic")');
-            }
-        });
+        
+        getTopPapers("semantic");
         
         information += '<br><h4>Information:</h4>';
         information += '<ul>';
@@ -492,7 +460,7 @@ function updateLeftPanel(){
             names ='<div id="selectionsBox">';
             names += '<h4>';
             for(var i in selections){
-                if(Nodes[i].type=="NGram"){
+                if(Nodes[i].type==catSem){
                     if(counter==4){
                         names += '<h4>[...]</h4>';
                         break;
@@ -510,7 +478,7 @@ function updateLeftPanel(){
             opossitesNodes+='<div id="opossitesBox">';
             js1='onclick="edgesTF=false;cancelSelection(true);graphDocs(\'';
             opos_aux = opos.filter(function(n) {
-                             return (Nodes[n['key']].type=="Document") ? n['key'] : null;
+                             return (Nodes[n['key']].type==catSoc) ? n['key'] : null;
                         });        
                         
             for(var i in opos_aux){
@@ -535,7 +503,7 @@ function updateLeftPanel(){
             information += '<ul>';
 
             for(var i in selections){
-                if(Nodes[i].type=="NGram"){
+                if(Nodes[i].type==catSem){
                     information += '<li><b>' + Nodes[i].label + '</b></li>';
                     google='<a href=http://www.google.com/#hl=en&source=hp&q=%20'+Nodes[i].label.replace(" ","+")+'%20><img src="css/branding/google.png"></img></a>';
                     wiki = '<a href=http://en.wikipedia.org/wiki/'+Nodes[i].label.replace(" ","_")+'><img src="css/branding/wikipedia.png"></img></a>';
@@ -554,7 +522,7 @@ function updateLeftPanel(){
             names ='<div id="selectionsBox">';
             names += '<h4>';
             for(var i in selections){
-                if(Nodes[i].type=="Document"){
+                if(Nodes[i].type==catSoc){
                     if(counter==4){
                         names += '<h4>[...]</h4>';
                         break;
@@ -574,7 +542,7 @@ function updateLeftPanel(){
             
                       
             opos_aux = opos.filter(function(n) {
-                            return (Nodes[n['key']].type=="NGram") ? n['key'] : null;
+                            return (Nodes[n['key']].type==catSem) ? n['key'] : null;
                         }); 
             for(var i in opos_aux){
                 if(i==22){
@@ -600,7 +568,7 @@ function updateLeftPanel(){
             information += '<ul>';
 
             for(var i in selections){                
-                if(Nodes[i].type=="Document"){
+                if(Nodes[i].type==catSoc){
                     information += '<li><b>' + Nodes[i].label + '</b></li>';
                     if(Nodes[i].htmlCont==""){
                         information += '<li>' + Nodes[i].attributes["level"] + '</li>';
@@ -617,6 +585,8 @@ function updateLeftPanel(){
     $("#names").html(names); //Information extracted, just added
     $("#opossiteNodes").html(opossitesNodes); //Information extracted, just added
     $("#information").html(information); //Information extracted, just added
+    $("#tips").html("");
+     $("#topPapers").show();
         
     /***** The animation *****/
     _cG = $("#leftcolumn");
@@ -630,7 +600,6 @@ function updateLeftPanel(){
     });
 }
 
-
 function graphNGrams(node_id){   
     pr("\tin graphNGrams");/**/
     fullurl = returnBaseUrl()+"img/trans/";
@@ -642,7 +611,7 @@ function graphNGrams(node_id){
     
     
     console.log("in graphNGrams, nodae_id: "+node_id);
-    if(Nodes[node_id].type=="NGram") {
+    if(Nodes[node_id].type==catSem) {
         labels = [];
         hideEverything() 
         //partialGraph.stopForceAtlas2();
@@ -703,7 +672,7 @@ function graphDocs(node_id){
     hideEverything()
     //partialGraph.stopForceAtlas2();
     
-    if(Nodes[node_id].type=="Document") {
+    if(Nodes[node_id].type==catSoc) {
         labels = [];
         
         unHide(node_id);
@@ -814,7 +783,7 @@ function markAsSelected(n_id,sel){
         }
         else {
             if(swclickActual=="social") {
-                if(nodeSel.type=="Document"){
+                if(nodeSel.type==catSoc){
                     if( typeof(nodes1[nodeSel.id])!=="undefined" &&
                         typeof(nodes1[nodeSel.id].neighbours)!=="undefined"
                       ){
@@ -861,7 +830,7 @@ function markAsSelected(n_id,sel){
                 }
             }
             if(swclickActual=="semantic") {
-                if(nodeSel.type=="Document"){           
+                if(nodeSel.type==catSoc){           
                     if( typeof(bipartiteD2N[nodeSel.id])!=="undefined" &&
                         typeof(bipartiteD2N[nodeSel.id].neighbours)!=="undefined"
                       ){
@@ -907,7 +876,7 @@ function markAsSelected(n_id,sel){
                 }
             }
             if(swclickActual=="sociosemantic") {
-                if(nodeSel.type=="Document"){  
+                if(nodeSel.type==catSoc){  
 
                     if( typeof(nodes1[nodeSel.id])!=="undefined" &&
                         typeof(nodes1[nodeSel.id].neighbours)!=="undefined"
@@ -1006,7 +975,7 @@ function markAsSelected(n_id,sel){
 //        nodeSel.attr['grey'] = 1;
 //        
 //        if(swclickActual=="social") {
-//            if(nodeSel.type=="Document"){
+//            if(nodeSel.type==catSoc){
 //                neigh=nodes1[nodeSel.id].neighbours;/**/
 //                for(var i in neigh){
 //                    vec = partialGraph._core.graph.nodesIndex[neigh[i]];
@@ -1044,7 +1013,7 @@ function markAsSelected(n_id,sel){
 //            }
 //        }
 //        if(swclickActual=="semantic") {
-//            if(nodeSel.type=="Document"){   
+//            if(nodeSel.type==catSoc){   
 //                neigh=bipartiteD2N[nodeSel.id].neighbours;/**/
 //                for(var i in neigh){
 //                    vec = partialGraph._core.graph.nodesIndex[neigh[i]];
@@ -1082,7 +1051,7 @@ function markAsSelected(n_id,sel){
 //            }
 //        }
 //        if(swclickActual=="sociosemantic") {
-//            if(nodeSel.type=="Document"){    
+//            if(nodeSel.type==catSoc){    
 //                neigh=nodes1[nodeSel.id].neighbours;/**/
 //                for(var i in neigh){
 //                    vec = partialGraph._core.graph.nodesIndex[neigh[i]];
@@ -1188,12 +1157,20 @@ function hoverNodeEffectWhileFA2(selectionRadius) {
         }
         if(categoriesIndex.length==1) updateLeftPanel_uni();
         if(categoriesIndex.length==2) updateLeftPanel();
-        if(is_empty(selections)==true){  
+        
+        //The most brilliant way of knowing if an array is empty in the world of JavaScript
+        i=0; for(var s in selections) i++;
+        
+        if(is_empty(selections)==true || i==0){
+                pr("cursor radius ON, downNode -> selecciones vacias");
                 $("#names").html(""); //Information extracted, just added
                 $("#opossiteNodes").html(""); //Information extracted, just added
                 $("#information").html("");
+                $("#tips").html(getTips());
+                $("#topPapers").html(""); $("#topPapers").hide();
                 changeButton("unselectNodes");
-                cancelSelection(false);
+                //cancelSelection(false);
+                graphResetColor();
         }
         else { 
                 greyEverything();
@@ -1205,6 +1182,28 @@ function hoverNodeEffectWhileFA2(selectionRadius) {
         overNodes=true;        
         partialGraph.draw();
     });
+}
+
+function graphResetColor(){
+    nds = partialGraph._core.graph.nodes.filter(function(x) {
+                            return !x['hidden'];
+          });
+    eds = partialGraph._core.graph.edges.filter(function(x) {
+                            return !x['hidden'];
+          });
+          
+    for(var x in nds){
+        n=nds[x];
+        n.attr["grey"] = 0;
+        n.color = n.attr["true_color"];
+    }
+    
+    for(var x in eds){
+        e=eds[x];
+        e.attr["grey"] = 0;
+        e.color = e.attr["true_color"];
+    }
+    
 }
 
 function createEdgesForExistingNodes (typeOfNodes) {
@@ -1354,7 +1353,6 @@ function unHideElem(id){
     }
 }
 
-
 function changeToMeso(iwannagraph) { 
     labels=[]
     pr("changing to Meso-"+iwannagraph);  
@@ -1374,7 +1372,7 @@ function changeToMeso(iwannagraph) {
             }
             if(swclickPrev=="semantic") {
                 for(var i in selections) {
-                    if(Nodes[i].type=="NGram"){
+                    if(Nodes[i].type==catSem){
                         for(var j in opossites) {
                             unHide(j);
                         }
@@ -1391,7 +1389,7 @@ function changeToMeso(iwannagraph) {
             }
             if(swclickPrev=="sociosemantic") { 
                 for(var i in selections) {
-                    if(Nodes[i].type=="Document"){
+                    if(Nodes[i].type==catSoc){
                         unHide(i);
                         for(var j in nodes1[i].neighbours) { 
                             id=nodes1[i].neighbours[j];
@@ -1399,7 +1397,7 @@ function changeToMeso(iwannagraph) {
                         }
                         createEdgesForExistingNodes("Scholars");
                     }
-                    if(Nodes[i].type=="NGram"){
+                    if(Nodes[i].type==catSem){
                         for(var j in opossites) {
                             unHide(j);
                         }
@@ -1446,7 +1444,7 @@ function changeToMeso(iwannagraph) {
             }
             if(swclickPrev=="social") {                
                 for(var i in selections) {
-                    if(Nodes[i].type=="Document"){
+                    if(Nodes[i].type==catSoc){
                         for(var j in opossites) {
                             unHide(j);
                         }
@@ -1463,14 +1461,14 @@ function changeToMeso(iwannagraph) {
             }
             if(swclickPrev=="sociosemantic") {                     
                 for(var i in selections) {
-                    if(Nodes[i].type=="Document"){                        
+                    if(Nodes[i].type==catSoc){                        
                         for(var j in opossites) {
                             unHide(j);
                         }
                         createEdgesForExistingNodes("Keywords");
                         break;
                     }
-                    if(Nodes[i].type=="NGram"){                        
+                    if(Nodes[i].type==catSem){                        
                         unHide(i);//sneaky bug!
                         for(var j in nodes2[i].neighbours) { 
                             id=nodes2[i].neighbours[j];
@@ -1498,13 +1496,13 @@ function changeToMacro(iwannagraph) {
     if(iwannagraph=="semantic") {
         hideEverything()
         for(var n in Nodes) {                
-            if(Nodes[n].type=="NGram"){
+            if(Nodes[n].type==catSem){
                 unHide(n);
             }                
         }  
         createEdgesForExistingNodes("Keywords");
         for(var n in selections){
-            if(Nodes[n].type=="Document"){
+            if(Nodes[n].type==catSoc){
                 highlightOpossites(opossites);
                 selectOpossites(opossites);
             }
@@ -1516,13 +1514,13 @@ function changeToMacro(iwannagraph) {
     if(iwannagraph=="social") {
         hideEverything()
         for(var n in Nodes) {                
-            if(Nodes[n].type=="Document"){
+            if(Nodes[n].type==catSoc){
                 unHide(n);
             }                
         }
         createEdgesForExistingNodes("Scholars");
         for(var n in selections){
-            if(Nodes[n].type=="NGram"){
+            if(Nodes[n].type==catSem){
                 highlightOpossites(opossites);
                 selectOpossites(opossites);
             }
@@ -1588,10 +1586,13 @@ function selectOpossites (list){//Expanding selection
         getOpossitesNodes(n,false);
     }
     updateLeftPanel();
-    if(is_empty(selections)==true){  
+    i=0; for(var s in selections) i++;
+    if(is_empty(selections)==true || i==0){  
                 $("#names").html(""); //Information extracted, just added
                 $("#opossiteNodes").html(""); //Information extracted, just added
                 $("#information").html("");
+                $("#topPapers").html(""); $("#topPapers").hide();
+                $("#tips").html(getTips());
                 changeButton("unselectNodes");
                 cancelSelection(false);
     }
@@ -1606,7 +1607,6 @@ function selectOpossites (list){//Expanding selection
     checkBox = false;      
     partialGraph.draw();
 }
-
 
 function saveGEXF(){
     json = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -1699,241 +1699,6 @@ function savePNG(){
     });
 }
 
-function setPanels(){
-    
-    $("#loading").remove();
-    $("#saveAs").click(function() {
-        saveGEXF();
-    });
-    $("#aUnfold").click(function() {
-        _cG = $("#leftcolumn");
-        if (_cG.offset().left < 0) {
-            _cG.animate({
-                "left" : "0px"
-            }, function() {
-                $("#aUnfold").attr("class","leftarrow");
-                $("#zonecentre").css({
-                    left: _cG.width() + "px"
-                });
-            }); 
-        } else {
-            _cG.animate({
-                "left" : "-" + _cG.width() + "px"
-            }, function() {
-                $("#aUnfold").attr("class","rightarrow");
-                $("#zonecentre").css({
-                    left: "0"
-                });
-            });
-        }
-        return false;
-    });
-    
-        
-    
-    /******************* /SEARCH ***********************/
-    $.ui.autocomplete.prototype._renderItem = function(ul, item) {
-        //var searchVal = $("#searchinput").val();
-        //var desc = extractContext(item.desc, searchVal);
-        return $('<li onclick=\'var s = "'+item.label+'"; search(s);$("#searchinput").val(strSearchBar);\'></li>')
-        //.data('item.autocomplete', item)
-        .append("<a><span class=\"labelresult\">" + item.label + "</span></a>" )
-        .appendTo(ul);
-    };
-
-    $('input#searchinput').autocomplete({
-        source: function(request, response) {
-            matches = [];
-            var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
-            var results = $.grep(labels, function(e) {
-                return matcher.test(e.label);
-            });
-            
-            if (!results.length) {
-                $("#noresults").text("Pas de résultats");
-            } else {
-                $("#noresults").empty();
-            }
-            matches = results.slice(0, maxSearchResults);
-            response(matches);
-            
-        },
-        minLength: minLengthAutoComplete
-    }); 
-   
-    $('#searchinput').bind('autocompleteopen', function(event, ui) {
-        $(this).data('is_open',true);
-    });
-    $('#searchinput').bind('autocompleteclose', function(event, ui) {
-        $(this).data('is_open',false);
-    });
-    $("#searchinput").focus(function () {
-        if ($(this).val() == strSearchBar) {
-            $(this).val('');
-        }
-    });
-    $("#searchinput").blur(function () {
-        if ($(this).val() == '') {
-            $(this).val(strSearchBar);
-        }
-    });
-    $("#searchinput").keyup(function (e) {
-        if (e.keyCode == 13 && $("input#searchinput").data('is_open') !== true) {
-            var s = $("#searchinput").val();
-            search(s);
-            $("#searchinput").val(strSearchBar);
-        }         
-    });
-    
-    
-    $("#searchinput").keydown(function (e) {
-        if (e.keyCode == 13 && $("input#searchinput").data('is_open') === true) { 
-            if(!is_empty(matches)) {
-                cancelSelection(false);
-                checkBox=true;
-                overNodes=true;
-                for(j=0;j<matches.length;j++){
-                    getOpossitesNodes(matches[j].id,false);
-                }  
-                updateLeftPanel();                
-                greyEverything();
-                for(j=0;j<matches.length;j++){
-                    markAsSelected(matches[j].id,true);
-                }
-                changeButton("selectNode");
-                partialGraph.draw();
-                overNodes=false;
-                checkBox=false;
-            }
-        }
-    });
-    
-    $("#searchsubmit").click(function () {
-        var s = $("#searchinput").val();
-        search(s);
-        $("#searchinput").val(strSearchBar);
-    });
-    /******************* /SEARCH ***********************/
-
-    
-    $("#lensButton").click(function () {
-        partialGraph.position(0,0,1);
-        partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, 0.8);
-        partialGraph.refresh();
-        partialGraph.startForceAtlas2();
-    });
-    
-    $('#sigma-example').dblclick(function(event) {        
-        targeted = partialGraph._core.graph.nodes.filter(function(n) {
-                return !!n['hover'];
-            }).map(function(n) {
-                return n.id;
-            });
-            
-        if(!is_empty(targeted)){
-            changeHoverActive(document.getElementById("switch"));
-        }
-        else {
-            if(!is_empty(selections)){
-                cancelSelection(false);
-                _cG = $("#leftcolumn");    
-                _cG.animate({
-                    "left" : "-" + _cG.width() + "px"
-                }, function() {
-                    $("#aUnfold").attr("class","rightarrow");
-                    $("#zonecentre").css({
-                       left: "0"
-                    });
-                });
-            }
-        }
-    });
-    
-    $("#overview")
-    //    .mousemove(onOverviewMove)
-    //    .mousedown(startMove)
-    //    .mouseup(endMove)
-    //    .mouseout(endMove)
-    .mousewheel(onGraphScroll);
-    
-    //$("sigma-example")
-    //    .mousemove(onOverviewMove)
-    //    .mousedown(startMove)
-    //    .mouseup(endMove)
-    //    .mouseout(endMove)
-    //    .mousewheel(onGraphScroll); -> it doesn't answer!
-    
-    
-    $("#zoomPlusButton").click(function () {
-        partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, partialGraph._core.mousecaptor.ratio * 1.5);
-        $("#zoomSlider").slider("value",partialGraph.position().ratio);
-        return false;
-    });
-    $("#zoomMinusButton").click(function () {
-        partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, partialGraph._core.mousecaptor.ratio * 0.5);
-        $("#zoomSlider").slider("value",partialGraph.position().ratio);
-        return false;
-    });
-    
-    $("#edgesButton").click(function () {
-        if(edgesTF==false){
-            partialGraph.stopForceAtlas2();
-            partialGraph.draw();
-            edgesTF=true;
-        }
-        else {
-            partialGraph.startForceAtlas2();
-            edgesTF=false;
-        }
-    });
-   
-    $("#sliderANodeSize").slider({
-        value: 1,
-        min: 1,
-        max: 25,
-        animate: true,
-        slide: function(event, ui) {
-            $.doTimeout(100,function (){
-                partialGraph.iterNodes(function (n) {
-                    pr();
-                    if(Nodes[n.id].type=="Document") {
-                        n.size = parseFloat(Nodes[n.id].size) + parseFloat((ui.value-1))*0.3;
-                    }
-                });
-                partialGraph.draw();
-            });
-        }
-    });
-    $("#sliderBNodeSize").slider({
-        value: 1,
-        min: 1,
-        max: 25,
-        animate: true,
-        slide: function(event, ui) {
-            $.doTimeout(100,function (){
-                partialGraph.iterNodes(function (n) {
-                    if(Nodes[n.id].type=="NGram") {
-                        n.size = parseFloat(Nodes[n.id].size) + parseFloat((ui.value-1))*0.3;
-                    }
-                });
-                partialGraph.draw();
-            });
-        }
-    });
-    $("#sliderSelectionZone").slider({
-        value: cursor_size * 5.0,
-        min: 0.0,
-        max: 150.0,
-        animate: true,
-        change: function(event, ui) {
-            cursor_size= ui.value;
-            //if(cursor_size==0) updateDownNodeEvent(false);
-            //else updateDownNodeEvent(true); 
-        //return callSlider("#sliderSelectionZone", "selectionRadius");
-        }
-    });
-}
-
 function getSwitchButton(){
     return document.getElementById("switchbutton").src;
 }
@@ -1965,91 +1730,4 @@ function switchSelection(){
         //is showing Scholars, so we have to invert names and opossites
     }
     
-}
-
-function startEnviroment(){
-    $('#sigma-example').css('background-color','white');
-    $("#category-B").hide();
-    $("#labelchange").hide();
-    $("#availableView").hide();  
-    /*======= Show some labels at the beginning =======*/
-    minIn=50,
-    maxIn=0,
-    minOut=50,
-    maxOut=0;        
-    partialGraph.iterNodes(function(n){
-        if(n.hidden==false){
-            if(parseInt(n.inDegree) < minIn) minIn= n.inDegree;
-            if(parseInt(n.inDegree) > maxIn) maxIn= n.inDegree;
-            if(parseInt(n.outDegree) < minOut) minOut= n.outDegree;
-            if(parseInt(n.outDegree) > maxOut) maxOut= n.outDegree;
-        }
-    });
-    counter=0;
-    n = partialGraph._core.graph.nodes;
-    for(i=0;i<n.length;i++) {
-        if(n[i].hidden==false){
-            if(n[i].inDegree==minIn && n[i].forceLabel==false) {
-                n[i].forceLabel=true;
-                counter++;
-            }
-            if(n[i].inDegree==maxIn && n[i].forceLabel==false) {
-                n[i].forceLabel=true;
-                counter++;
-            }
-            if(n[i].outDegree==minOut && n[i].forceLabel==false) {
-                n[i].forceLabel=true;
-                counter++;
-            }
-            if(n[i].outDegree==maxOut && n[i].forceLabel==false) {
-                n[i].forceLabel=true;
-                counter++;
-            }
-            if(counter==6) break;
-        }
-    }
-    /*======= Show some labels at the beginning =======*/
-    initializeMap();
-    updateMap();
-    
-    updateDownNodeEvent(false);        
-    
-    /* Initial Effect (Add: unchecked) HIDE */
-//    partialGraph.bind('overnodes',function(event){ 
-//        var nodes = event.content;
-//        var neighbors = {};
-//        var nrEdges = 0;
-//        var e = partialGraph._core.graph.edges;
-//        for(i=0;i<e.length;i++){
-//            if(nodes.indexOf(e[i].source.id)>=0 || nodes.indexOf(e[i].target.id)>=0){
-//                neighbors[e[i].source.id] = 1;
-//                neighbors[e[i].target.id] = 1;
-//                nrEdges++;//github.com/jacomyal/sigma.js/issues/62
-//            }
-//        }
-//        //partialGraph.draw(2,1,2);
-//        partialGraph.iterNodes(function(n){
-//            if(nrEdges>0) {
-//                if(!neighbors[n.id]){
-//                    n.hidden = 1;
-//                }else{
-//                    n.hidden = 0;
-//                }
-//            }
-//        }).draw(2,1,2);
-//    });
-//  
-//    partialGraph.bind('outnodes',function(){
-//        var e = partialGraph._core.graph.edges;
-//        for(i=0;i<e.length;i++){
-//            e[i].hidden = 0;
-//        }
-//        partialGraph.draw(2,1,2);
-//            
-//        partialGraph.iterNodes(function(n){
-//            n.hidden = 0;
-//        }).draw(2,1,2);
-//    });
-    /* Initial Effect (Add: unchecked) HIDE */
-    setPanels();
 }

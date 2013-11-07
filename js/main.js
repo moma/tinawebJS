@@ -7,8 +7,8 @@ if(typeof(getUrlParam.file)!=="undefined"){
         pr("nb_cats: "+nb_cats);
         listGexfs();
         
-        if(nb_cats==1) startOnePartite(getUrlParam.file); 
-        else if(nb_cats==2) startBipartite(getUrlParam.file);
+        if(nb_cats==1) bringTheNoise(getUrlParam.file,"mono");
+        else if(nb_cats==2) bringTheNoise(getUrlParam.file,"bi")
         
         $.doTimeout(30,function (){
             $("#currentGraph").html(getUrlParam.file);
@@ -35,100 +35,91 @@ function listGexfs(){
     });    
 }
 
-function startOnePartite(pathfile) {
-    bipartite=false;
-    $("#labelchange").hide();
-    $("#availableView").hide(); 
-    $("#category-B").hide();
-    $("#images").hide();
-    
-    pr("in one partite net");    
-    pr("pathfile: "+pathfile);
+function bringTheNoise(pathfile,type){
+    pr("I'm in the new function");
     partialGraph = sigma.init(document.getElementById('sigma-example'))
     .drawingProperties(sigmaJsDrawingProperties)
     .graphProperties(sigmaJsGraphProperties)
     .mouseProperties(sigmaJsMouseProperties);
     
-    partialGraph.ctxMini = document.getElementById('overview').getContext('2d'); 
-    partialGraph.ctxMini.clearRect(0, 0, overviewWidth, overviewHeight);
-    partialGraph.totalScroll=0;    
-    partialGraph.centreX = partialGraph._core.width/2;
-    partialGraph.centreY = partialGraph._core.heigth/2;
-       
-    $('#sigma-example').css('background-color','white');
+    startMiniMap();
     
-    console.log("parsing...");        
+    console.log("parsing...");       
     parse(pathfile);
-    onepartiteExtract();    
+    
+    if(type=="mono") {
+        onepartiteExtract(); 
+        $("#left").hide();
+    }
+    else if(type=="bi") {
+        fullExtract(); 
+    }
+    
     updateEdgeFilter("social");
     updateNodeFilter("social");
-    console.log("Parsing complete.");
+    pushSWClick("social");
+    cancelSelection(false);
+    console.log("Parsing complete.");     
+    partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, 0.8).draw(2,2,2);
+    partialGraph.startForceAtlas2();   
     
+    $("#tips").html(getTips());
+    $('#sigma-example').css('background-color','white');
+    $("#category-B").hide();
+    $("#labelchange").hide();
+    $("#availableView").hide();  
     /*======= Show some labels at the beginning =======*/
-//    minIn=50,
-//    maxIn=0,
-//    minOut=50,
-//    maxOut=0;        
-//    partialGraph.iterNodes(function(n){
-//        if(parseInt(n.inDegree) < minIn) minIn= n.inDegree;
-//        if(parseInt(n.inDegree) > maxIn) maxIn= n.inDegree;
-//        if(parseInt(n.outDegree) < minOut) minOut= n.outDegree;
-//        if(parseInt(n.outDegree) > maxOut) maxOut= n.outDegree;
-//    });
-//    partialGraph.iterNodes(function(n){
-//        if(n.inDegree==minIn) n.forceLabel=true;
-//        if(n.inDegree==maxIn) n.forceLabel=true;
-//        if(n.outDegree==minOut) n.forceLabel=true;
-//        if(n.outDegree==maxOut) n.forceLabel=true;
-//    });
+    minIn=50,
+    maxIn=0,
+    minOut=50,
+    maxOut=0;        
+    partialGraph.iterNodes(function(n){
+        if(n.hidden==false){
+            if(parseInt(n.inDegree) < minIn) minIn= n.inDegree;
+            if(parseInt(n.inDegree) > maxIn) maxIn= n.inDegree;
+            if(parseInt(n.outDegree) < minOut) minOut= n.outDegree;
+            if(parseInt(n.outDegree) > maxOut) maxOut= n.outDegree;
+        }
+    });
+    counter=0;
+    n = partialGraph._core.graph.nodes;
+    for(i=0;i<n.length;i++) {
+        if(n[i].hidden==false){
+            if(n[i].inDegree==minIn && n[i].forceLabel==false) {
+                n[i].forceLabel=true;
+                counter++;
+            }
+            if(n[i].inDegree==maxIn && n[i].forceLabel==false) {
+                n[i].forceLabel=true;
+                counter++;
+            }
+            if(n[i].outDegree==minOut && n[i].forceLabel==false) {
+                n[i].forceLabel=true;
+                counter++;
+            }
+            if(n[i].outDegree==maxOut && n[i].forceLabel==false) {
+                n[i].forceLabel=true;
+                counter++;
+            }
+            if(counter==6) break;
+        }
+    }
     /*======= Show some labels at the beginning =======*/
-    
-    partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, 0.8).draw();
     initializeMap();
     updateMap();
-    updateDownNodeEvent(false);
-        /* Initial Effect (Add: unchecked) HIDE */
-    partialGraph.bind('overnodes',function(event){ 
-        var nodes = event.content;
-        var neighbors = {};
-        var nrEdges = 0;
-        var e = partialGraph._core.graph.edges;
-        for(i=0;i<e.length;i++){
-            if(nodes.indexOf(e[i].source.id)>=0 || nodes.indexOf(e[i].target.id)>=0){
-                neighbors[e[i].source.id] = 1;
-                neighbors[e[i].target.id] = 1;
-                nrEdges++;//github.com/jacomyal/sigma.js/issues/62
-            }
-        }
-        //partialGraph.draw(2,1,2);
-        partialGraph.iterNodes(function(n){
-            if(nrEdges>0) {
-                if(!neighbors[n.id]){
-                    n.hidden = 1;
-                }else{
-                    n.hidden = 0;
-                }
-            }
-        }).draw(2,1,2);
-    });
-  
-    partialGraph.bind('outnodes',function(){
-        var e = partialGraph._core.graph.edges;
-        for(i=0;i<e.length;i++){
-            e[i].hidden = 0;
-        }
-        partialGraph.draw(2,1,2);
-            
-        partialGraph.iterNodes(function(n){
-            n.hidden = 0;
-        }).draw(2,1,2);
-    });
-    /* Initial Effect (Add: unchecked) HIDE */
     
-    partialGraph.startForceAtlas2();
+    updateDownNodeEvent(false);    
     
+    
+    
+    
+    
+    $("#loading").remove();
+    $("#saveAs").click(function() {
+        saveGEXF();
+    });
     $("#aUnfold").click(function() {
-        var _cG = $("#leftcolumn");
+        _cG = $("#leftcolumn");
         if (_cG.offset().left < 0) {
             _cG.animate({
                 "left" : "0px"
@@ -198,13 +189,6 @@ function startOnePartite(pathfile) {
             $(this).val(strSearchBar);
         }
     });
-    $("#searchinput").keyup(function (e) {
-        if (e.keyCode == 13 && $("input#searchinput").data('is_open') !== true) {
-            var s = $("#searchinput").val();
-            search(s);
-            $("#searchinput").val(strSearchBar);
-        }         
-    });
     
     
     $("#searchinput").keydown(function (e) {
@@ -216,27 +200,21 @@ function startOnePartite(pathfile) {
                     nodeFound=searchLabel(matches[j].label);
                     getOpossitesNodes(nodeFound,true); 
                 }
-//                for(var i in selections){
-//                    pr(Nodes[i].label);
-//                    markAsSelected(i,true);
-//                }
-//                
-//                
-//                
-//                if(is_empty(selections)==true){  
-//                    $("#names").html("");
-//                    $("#opossiteNodes").html("");
-//                    $("#information").html("");
-//                    changeButton("unselectNodes");
-//                }
-//                else {
-//                    greyEverything();
-//                    for(var i in selections){
-//                        markAsSelected(i,true);
-//                    }
-//                    changeButton("selectNode");
-//                    partialGraph.draw();
-//                }
+
+                if(is_empty(selections)==true){  
+                    $("#names").html("");
+                    $("#opossiteNodes").html("");
+                    $("#information").html("");
+                    changeButton("unselectNodes");
+                }
+                else {
+                    greyEverything();
+                    for(var i in selections){
+                        markAsSelected(i,true);
+                    }
+                    changeButton("selectNode");
+                    partialGraph.draw();
+                }
                 checkBox=false;
                 $("input#searchinput").val("");
                 $("input#searchinput").autocomplete( "close" );
@@ -245,7 +223,18 @@ function startOnePartite(pathfile) {
         }
     });
     
+    
+    $("#searchinput").keyup(function (e) {
+        if (e.keyCode == 13 && $("input#searchinput").data('is_open') !== true) {
+            var s = $("#searchinput").val();
+            $("#searchinput").val(strSearchBar);
+            if(categoriesIndex.length==1) updateLeftPanel_uni();
+            if(categoriesIndex.length==2) updateLeftPanel();            
+        }
+    });
+    
     $("#searchsubmit").click(function () {
+        pr("in searchsubmit()");
         var s = $("#searchinput").val();
         search(s);
         $("#searchinput").val(strSearchBar);
@@ -261,20 +250,23 @@ function startOnePartite(pathfile) {
     });
     
     $('#sigma-example').dblclick(function(event) {
-        
-        cancelSelection();    
-        /***** The animation *****/
-        _cG = $("#leftcolumn");    
-        _cG.animate({
-            "left" : "-" + _cG.width() + "px"
-        }, function() {
-            $("#aUnfold").attr("class","rightarrow");
-            $("#zonecentre").css({
-                left: "0"
+        pr("monograph: in the double click event");
+        targeted = partialGraph._core.graph.nodes.filter(function(n) {
+                return !!n['hover'];
+            }).map(function(n) {
+                return n.id;
             });
-        });
-    /***** The animation *****/
+            
+        if(!is_empty(targeted)){
+            changeHoverActive(document.getElementById("switch"));
+        }
+        else {
+            if(!is_empty(selections)){
+                cancelSelection(false);
+            }
+        }
     });
+    
     
     $("#overview")
     //    .mousemove(onOverviewMove)
@@ -282,7 +274,16 @@ function startOnePartite(pathfile) {
     //    .mouseup(endMove)
     //    .mouseout(endMove)
     .mousewheel(onGraphScroll);
-        $("#zoomPlusButton").click(function () {
+    
+    //$("sigma-example")
+    //    .mousemove(onOverviewMove)
+    //    .mousedown(startMove)
+    //    .mouseup(endMove)
+    //    .mouseout(endMove)
+    //    .mousewheel(onGraphScroll); -> it doesn't answer!
+    
+    
+    $("#zoomPlusButton").click(function () {
         partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, partialGraph._core.mousecaptor.ratio * 1.5);
         $("#zoomSlider").slider("value",partialGraph.position().ratio);
         return false;
@@ -311,17 +312,33 @@ function startOnePartite(pathfile) {
         max: 25,
         animate: true,
         slide: function(event, ui) {
-            $.doTimeout(300,function (){
+            $.doTimeout(100,function (){
                 partialGraph.iterNodes(function (n) {
-                    //if(n.id.charAt(0)=="D") {
+                    pr();
+                    if(Nodes[n.id].type==catSoc) {
                         n.size = parseFloat(Nodes[n.id].size) + parseFloat((ui.value-1))*0.3;
-                    //}
+                    }
                 });
                 partialGraph.draw();
             });
         }
     });
-    
+    $("#sliderBNodeSize").slider({
+        value: 1,
+        min: 1,
+        max: 25,
+        animate: true,
+        slide: function(event, ui) {
+            $.doTimeout(100,function (){
+                partialGraph.iterNodes(function (n) {
+                    if(Nodes[n.id].type==catSem) {
+                        n.size = parseFloat(Nodes[n.id].size) + parseFloat((ui.value-1))*0.3;
+                    }
+                });
+                partialGraph.draw();
+            });
+        }
+    });
     $("#sliderSelectionZone").slider({
         value: cursor_size * 5.0,
         min: 0.0,
@@ -329,37 +346,9 @@ function startOnePartite(pathfile) {
         animate: true,
         change: function(event, ui) {
             cursor_size= ui.value;
-            if(cursor_size==0) updateDownNodeEvent(false);
-            else updateDownNodeEvent(true); 
+            //if(cursor_size==0) updateDownNodeEvent(false);
+            //else updateDownNodeEvent(true); 
         //return callSlider("#sliderSelectionZone", "selectionRadius");
         }
     });
-    camaraButton();
-}
-
-function startBipartite(pathfile) {
-    bipartite=true;
-    //currentUrl=window.location.href;
-    pr("pathfile: "+pathfile);
-    partialGraph = sigma.init(document.getElementById('sigma-example'))
-    .drawingProperties(sigmaJsDrawingProperties)
-    .graphProperties(sigmaJsGraphProperties)
-    .mouseProperties(sigmaJsMouseProperties);
-    partialGraph.type="social";
-    
-    startMiniMap();
-    
-    console.log("parsing...");       
-    parse(pathfile);
-    fullExtract(); 
-    updateEdgeFilter("social");
-    updateNodeFilter("social");
-    pushSWClick("social");
-    cancelSelection(false);
-    console.log("Parsing complete.");     
-    partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, 0.8).draw(2,2,2);
-    partialGraph.startForceAtlas2();   
-
-    startEnviroment(); 
-    camaraButton();
 }
