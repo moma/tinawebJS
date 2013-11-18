@@ -1,6 +1,6 @@
 <?php
+// default informations
 
-include('parameters_details.php');
 
 $output = "<ul>"; // string sent to the javascript for display
 
@@ -61,7 +61,7 @@ foreach ($wos_ids as $id => $score) {
 	$output.=imagestar($score,$factor).' ';
 	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
-		$output.='<a href="JavaScript:newPopup(\'php/doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
+		$output.='<a href="JavaScript:newPopup(\'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
 		$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="img/gs.png"></a>';	
 		//$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>';	
 	}

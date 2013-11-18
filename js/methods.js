@@ -394,7 +394,7 @@ function updateLeftPanel(){
         pr(jsonparams);
         $.ajax({
             type: 'GET',
-            url: 'php/test.php',
+            url: 'php/info_div.php',
             data: "type=social&query="+jsonparams,
             //contentType: "application/json",
             //dataType: 'json',
@@ -453,7 +453,7 @@ function updateLeftPanel(){
         jsonparams=JSON.stringify(params);
         $.ajax({
             type: 'GET',
-            url: 'php/test.php',
+            url: 'php/info_div.php',
             data: "type=semantic&query="+jsonparams,
             //contentType: "application/json",
             //dataType: 'json',
