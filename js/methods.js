@@ -389,6 +389,7 @@ function updateLeftPanel(){
         opossitesNodes += '</div>';
         
         getTopPapers("social");
+
         
         information += '<br><h4>Information:</h4>';
         information += '<ul>';
@@ -432,6 +433,7 @@ function updateLeftPanel(){
         
         
         getTopPapers("semantic");
+
         
         information += '<br><h4>Information:</h4>';
         information += '<ul>';

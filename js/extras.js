@@ -14,7 +14,7 @@ function getTopPapers(type){
         jsonparams = jsonparams.split('&').join('__and__');
         $.ajax({
             type: 'GET',
-            url: 'php/test.php',
+            url: 'php/info_div.php',
             data: "type="+type+"&query="+jsonparams,
             //contentType: "application/json",
             //dataType: 'json',
