@@ -1,0 +1,3 @@
+[submodule "tinaJS_info_div"]
+	path = tinaJS_info_div
+	url = git@gargantext.com:git/tinaJS_info_div.git
