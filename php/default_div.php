@@ -46,7 +46,7 @@ $sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
 $sql.=')'.$restriction.'
 	GROUP BY '.$id.'
 	ORDER BY count('.$id.') DESC
-	LIMIT 6';
+	LIMIT 1000';
 
 $wos_ids = array();
 $sum=0;
@@ -58,10 +58,16 @@ foreach ($base->query($sql) as $row) {
 	    $wos_ids[$row[$id]] = $row["count(*)"];
         $sum = $row["count(*)"] +$sum;
 }
+
+$number_doc=count($wos_ids);
+$count=0;
 foreach ($wos_ids as $id => $score) {
-	$output.="<li title='".$score."'>";
-	$output.=imagestar($score,$factor).' ';
+	if ($count<$max_item_displayed){
+		$count+=1;
+			$output.="<li title='".$score."'>";
+	$output.=imagestar($score,$factor).' ';	
 	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
+
 	foreach ($base->query($sql) as $row) {
 		$output.='<a href="JavaScript:newPopup(\'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
 		$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="img/gs.png"></a>';	
@@ -83,9 +89,12 @@ foreach ($wos_ids as $id => $score) {
 	//<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'
 
 	$output.=$external_link."</li><br>";
+	}else{
+	continue;
+	}
 }
+$output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']';
 
-$output .= "</ul>";
 
 function imagestar($score,$factor) {
 // produit le html des images de score
