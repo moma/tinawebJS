@@ -26,10 +26,10 @@ if($type=="social"){
 }
 
 if($type=="semantic"){
-	$table = "articles2terms";
-	$column = "terms_id";
-	$id = "wos_id";
-	$restriction=' AND  title_or_abstract=0 ';
+	$table = "ISIterms";
+	$column = "data";
+	$id = "id";
+	$restriction='';
 	$factor=3;
 }
 
@@ -40,6 +40,7 @@ $sql = 'SELECT count(*),'.$id.'
 foreach($elems as $elem){
 	$sql.=' '.$column.'="'.$elem.'" OR ';
 }
+#$querynotparsed=$sql;#####
 $sql = substr($sql, 0, -3);
 $sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
 
@@ -48,6 +49,8 @@ $sql.=')'.$restriction.'
 	ORDER BY count('.$id.') DESC
 	LIMIT 1000';
 
+#$queryparsed=$sql;#####
+
 $wos_ids = array();
 $sum=0;
 
@@ -55,9 +58,11 @@ $sum=0;
 // array of all relevant documents with score
 
 foreach ($base->query($sql) as $row) {
-	    $wos_ids[$row[$id]] = $row["count(*)"];
+	$wos_ids[$row[$id]] = $row["count(*)"];
         $sum = $row["count(*)"] +$sum;
 }
+
+#$afterquery=json_encode($wos_ids);#####
 
 $number_doc=count($wos_ids);
 $count=0;
@@ -93,7 +98,7 @@ foreach ($wos_ids as $id => $score) {
 	continue;
 	}
 }
-$output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']';
+$output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; #####
 
 
 function imagestar($score,$factor) {
