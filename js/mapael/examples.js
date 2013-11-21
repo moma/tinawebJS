@@ -1,12 +1,17 @@
 $(function(){
 
         console.log("WOLOLO WOLOLO WOLOLO WOLOLO");
+        min=20;
+        max=519;
+        med=max/2;
         $.ajax({
             type: 'GET',
-            url: 'areas.json',
+            //url: 'areas.json',
+            url: "http://localhost/ademe/tinawebJS/php/mapael.php",
             contentType: "application/json",
             //dataType: 'jsonp',
             success : function(data){ 
+                console.log(data);
                     $(".maparea6").mapael({
                             map : {
                                     name : "world_countries",
@@ -23,37 +28,37 @@ $(function(){
                                             title :"Population by country", 
                                             slices : [
                                                     {
-                                                            max :5000000, 
+                                                            max :min, 
                                                             attrs : {
                                                                     fill : "#6aafe1"
                                                             },
-                                                            label :"Less than de 5000000 inhabitants"
+                                                            label :"Less than de "+min+" humans"
                                                     },
                                                     {
-                                                            min :5000000, 
-                                                            max :10000000, 
+                                                            min :min, 
+                                                            max :med, 
                                                             attrs : {
                                                                     fill : "#459bd9"
                                                             },
-                                                            label :"Between 5000000 and 10000000 inhabitants"
+                                                            label :"Between "+min+" and "+med+" humans"
                                                     },
                                                     {
-                                                            min :10000000, 
-                                                            max :50000000, 
+                                                            min :med, 
+                                                            max :max, 
                                                             attrs : {
                                                                     fill : "#2579b5"
                                                             },
-                                                            label :"Between 10000000 and 50000000 inhabitants"
+                                                            label :"Between "+med+" and "+max+" humans"
                                                     },
                                                     {
-                                                            min :50000000, 
+                                                            min :max, 
                                                             attrs : {
                                                                     fill : "#1a527b"
                                                             },
-                                                            label :"More than 50 million inhabitants"
+                                                            label :"More than "+max+" humans"
                                                     }
                                             ]
-                                    },
+                                    }/*,
                                     plot :{
                                             display : true,
                                             title: "Some cities ..."
@@ -96,8 +101,8 @@ $(function(){
                                                             size : 30
                                                     }
                                             ]
-                                    }
-                            },
+                                    }*/
+                            },/*
                             plots : {
                                     'paris' : {
                                             latitude :48.86, 
@@ -129,7 +134,7 @@ $(function(){
                                             value : 200001, 
                                             tooltip: {content : "Tokyo<br />Population: 200001"}
                                     }
-                            },
+                            },*/
                             areas: data
                     });
             },
