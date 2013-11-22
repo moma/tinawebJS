@@ -1,3 +1,0 @@
-[submodule "geomap"]
-	path = geomap
-	url = git@github.com:moma/geomap.git
