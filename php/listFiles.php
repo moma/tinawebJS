@@ -1,8 +1,9 @@
 <?php
 header ("Content-Type:text/html"); 
-$string = getcwd();
-$string = str_replace("/php","",$string);
+//$string = getcwd();
+//$string = str_replace("/php","",$string);
 
+$string=dirname(dirname(getcwd())); // ProjectExplorer folder name: /var/www/ademe
 
 $files = getDirectoryList($string."/data");
 
@@ -16,11 +17,11 @@ $html = "<select style='width:150px;' onchange='
 $html.="<option selected>[Select your Graph]</option>";
 $filesSorted=array();
 foreach($files as $file){
-	array_push($filesSorted,$file);
+    array_push($filesSorted,$file);
 }
 sort($filesSorted);
 foreach($filesSorted as $file){
-	$html.="<option>$file</option>";
+    $html.="<option>$file</option>";
 }
 $html.="</select>";
 echo $html;
@@ -38,5 +39,6 @@ function getDirectoryList ($directory)  {
     closedir($handler);
     return $results;
 }
+
 ?>
 
