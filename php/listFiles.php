@@ -31,8 +31,8 @@ function getDirectoryList ($directory)  {
     $handler = opendir($directory);
     while ($file = readdir($handler)) {
       if ($file != "." && $file != ".." && 
-         (strpos($file,'gexf~'))==false && 
-         (strpos($file,'gexf'))==true) {
+         (strpos($file,'.gexf~'))==false && 
+         (strpos($file,'.gexf'))==true) {
         $results[] = $file;
       }
     }
