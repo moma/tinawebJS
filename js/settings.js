@@ -52,6 +52,7 @@ var sigmaJsMouseProperties = {
 
 //"http://webchat.freenode.net/?nick=Ademe&channels=#anoe"
 var ircUrl="http://webchat.freenode.net/?nick="+ircNick+"&channels="+ircCHN;
+var twjs="tinawebJS/";
 //var iterationsFA2=6;
 var categories = {};
 var categoriesIndex = [];

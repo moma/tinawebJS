@@ -22,8 +22,8 @@ if(typeof(getUrlParam.file)!=="undefined"){
 function listGexfs(){
     $.ajax({
         type: 'GET',
-        url: 'tinawebJS/php/listFiles.php',
-        data: "url=nothing",
+        url: twjs+'php/listFiles.php',
+        data: "url="+twjs,
         //contentType: "application/json",
         //dataType: 'json',
         success : function(data){ 

@@ -99,7 +99,7 @@ function returnBaseUrl(){
     origin = window.location.origin;
     nameOfHtml=window.location.pathname.substring(window.location.pathname.lastIndexOf('/')+1);
     pathname = window.location.pathname.replace(nameOfHtml,"");
-    return origin+pathname;
+    return origin+pathname+twjs;
 }
 
 function cancelSelection (fromTagCloud) {
@@ -440,9 +440,9 @@ function updateLeftPanel(){
             
         for(var i in selections){
             information += '<li><b>' + Nodes[i].label + '</b></li>';
-            google='<a href=http://www.google.com/#hl=en&source=hp&q=%20'+Nodes[i].label.replace(" ","+")+'%20><img src="img/google.png"></img></a>';
-            wiki = '<a href=http://en.wikipedia.org/wiki/'+Nodes[i].label.replace(" ","_")+'><img src="img/wikipedia.png"></img></a>';
-            flickr= '<a href=http://www.flickr.com/search/?w=all&q='+Nodes[i].label.replace(" ","+")+'><img src="img/flickr.png"></img></a>';
+            google='<a href=http://www.google.com/#hl=en&source=hp&q=%20'+Nodes[i].label.replace(" ","+")+'%20><img src="'+twjs+'img/google.png"></img></a>';
+            wiki = '<a href=http://en.wikipedia.org/wiki/'+Nodes[i].label.replace(" ","_")+'><img src="'+twjs+'img/wikipedia.png"></img></a>';
+            flickr= '<a href=http://www.flickr.com/search/?w=all&q='+Nodes[i].label.replace(" ","+")+'><img src="'+twjs+'img/flickr.png"></img></a>';
             information += '<li>'+google+"&nbsp;"+wiki+"&nbsp;"+flickr+'</li><br>';
             
         }
@@ -507,9 +507,9 @@ function updateLeftPanel(){
             for(var i in selections){
                 if(Nodes[i].type==catSem){
                     information += '<li><b>' + Nodes[i].label + '</b></li>';
-                    google='<a href=http://www.google.com/#hl=en&source=hp&q=%20'+Nodes[i].label.replace(" ","+")+'%20><img src="css/branding/google.png"></img></a>';
-                    wiki = '<a href=http://en.wikipedia.org/wiki/'+Nodes[i].label.replace(" ","_")+'><img src="css/branding/wikipedia.png"></img></a>';
-                    flickr= '<a href=http://www.flickr.com/search/?w=all&q='+Nodes[i].label.replace(" ","+")+'><img src="css/branding/flickr.png"></img></a>';
+                    google='<a href=http://www.google.com/#hl=en&source=hp&q=%20'+Nodes[i].label.replace(" ","+")+'%20><img src="'+twjs+'img/google.png"></img></a>';
+                    wiki = '<a href=http://en.wikipedia.org/wiki/'+Nodes[i].label.replace(" ","_")+'><img src="'+twjs+'img/wikipedia.png"></img></a>';
+                    flickr= '<a href=http://www.flickr.com/search/?w=all&q='+Nodes[i].label.replace(" ","+")+'><img src="'+twjs+'img/flickr.png"></img></a>';
                     information += '<li>'+google+"&nbsp;"+wiki+"&nbsp;"+flickr+'</li><br>';
                   }
            }
