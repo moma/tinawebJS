@@ -99,7 +99,7 @@ foreach ($wos_ids as $id => $score) {
 	}
 }
 $output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; #####
-$output .= "<br><br><center><a href='#'><img width='50px' alt='See the world distribution!' src='tinawebJS/img/world.png'></img></a></center>";
+$output .= "<br><br><center><a href='#'><img width='50px' title='See the world distribution!' src='tinawebJS/img/world.png'></img></a></center>";
 
 
 function imagestar($score,$factor) {
