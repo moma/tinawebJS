@@ -4,6 +4,17 @@ var fa2enabled=false;
 var getAdditionalInfo=true;
 var mainfile="2-Terms-Authors-300nodes.gexf";
 
+
+var dataSource = {};
+dataSource["netw01"] = {
+    gexf:"",
+    db:""
+};
+dataSource["netw02"] = {
+    gexf:"",
+    db:""
+};
+
 ircNick="Ademe";
 ircCHN="#anoe";
 
@@ -19,37 +30,43 @@ var cursor_size= 100;
 
 var desirableTagCloudFont_MIN=12;
 var desirableTagCloudFont_MAX=20;
-var desirableNodeSizeMIN=4;
-var desirableNodeSizeMAX=12;
-var desirableScholarSize=6; //Remember that all scholars have the same size!
 
-var sigmaJsDrawingProperties = {
-    defaultLabelColor: 'black',
-    defaultLabelSize: 12,//in fact I'm using it as minLabelSize'
-    defaultLabelBGColor: '#fff',
-    defaultLabelHoverColor: '#000',
-    labelThreshold: 9,
-    defaultEdgeType: 'curve',
+
+        // ============ < SIGMA.JS PROPERTIES > ============
+        var desirableNodeSizeMIN=4;
+        var desirableNodeSizeMAX=12;
+        var desirableScholarSize=6; //Remember that all scholars have the same size!
+
+        var sigmaJsDrawingProperties = {
+            defaultLabelColor: 'black',
+            defaultLabelSize: 12,//in fact I'm using it as minLabelSize'
+            defaultLabelBGColor: '#fff',
+            defaultLabelHoverColor: '#000',
+            labelThreshold: 9,
+            defaultEdgeType: 'curve',
+
+            borderSize: 2.5,//Something other than 0
+            nodeBorderColor: "default",//exactly like this
+            defaultNodeBorderColor: "black"//,//Any color of your choice
+            //defaultBorderView: "always"
+        };
+        var sigmaJsGraphProperties = {
+            minEdgeSize: 2,
+            maxEdgeSize: 2
+        };
+        var sigmaJsMouseProperties = {
+            minRatio:0.1,
+            maxRatio: 100
+        };
+        // ============ < / SIGMA.JS PROPERTIES > ============
+         
     
-    borderSize: 2.5,//Something other than 0
-    nodeBorderColor: "default",//exactly like this
-    defaultNodeBorderColor: "black"//,//Any color of your choice
-    //defaultBorderView: "always"
-};
-var sigmaJsGraphProperties = {
-    minEdgeSize: 2,
-    maxEdgeSize: 2
-};
-var sigmaJsMouseProperties = {
-    minRatio:0.1,
-    maxRatio: 100
-};
 // ============ < / DEVELOPER OPTIONS > ============
 
 
 
 
-
+// ============ < VARIABLES.JS > ============
 //"http://webchat.freenode.net/?nick=Ademe&channels=#anoe"
 var ircUrl="http://webchat.freenode.net/?nick="+ircNick+"&channels="+ircCHN;
 var twjs="tinawebJS/";
@@ -134,3 +151,4 @@ var opts = {
   top: 'auto', // Top position relative to parent in px
   left: 'auto' // Left position relative to parent in px
 };
+// ============ < / VARIABLES.JS > ============
