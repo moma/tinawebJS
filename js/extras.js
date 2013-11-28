@@ -2,6 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+function selectionToMap(){
+    pr("Salut monde!");
+}
 
 function getTopPapers(type){
     if(getAdditionalInfo){

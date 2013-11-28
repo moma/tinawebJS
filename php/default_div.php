@@ -16,6 +16,7 @@ $elems = json_decode($query);
 $table = "";
 $column = "";
 $id="";
+$twjs="tinawebJS/";
 
 if($type=="social"){
 	$table = "ISIAUTHOR";
@@ -74,8 +75,8 @@ foreach ($wos_ids as $id => $score) {
 	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 
 	foreach ($base->query($sql) as $row) {
-		$output.='<a href="JavaScript:newPopup(\'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
-		$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="tinawebJS/img/gs.png"></a>';	
+		$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
+		$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
 		//$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>';	
 	}
 
@@ -99,7 +100,7 @@ foreach ($wos_ids as $id => $score) {
 	}
 }
 $output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; #####
-$output .= "<br><br><center><a href='#'><img width='50px' title='See the world distribution!' src='tinawebJS/img/world.png'></img></a></center>";
+$output .= "<br><br><center><a href='#'><img width='50px' onclick='selectionToMap();' title='See the world distribution!' src='".$twjs."img/world.png'></img></a></center>";
 
 
 function imagestar($score,$factor) {
@@ -108,14 +109,14 @@ function imagestar($score,$factor) {
     if ($score > .5) {
         $star_image = '';
         for ($s = 0; $s < min(5,$score/$factor); $s++) {
-            $star_image.='<img src="tinawebJS/img/star.gif" border="0" >';
+            $star_image.='<img src="'.$twjs.'img/star.gif" border="0" >';
         }
     } else {
-        $star_image.='<img src="tinawebJS/img/stargrey.gif" border="0">';
+        $star_image.='<img src="'.$twjs.'img/stargrey.gif" border="0">';
     }
     return $star_image;
 }
 
 echo $output;
-
+//pt - 301 ; 15.30
 ?>
