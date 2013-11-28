@@ -16,7 +16,7 @@ $elems = json_decode($query);
 $table = "";
 $column = "";
 $id="";
-$twjs="tinawebJS/";
+$twjs="tinawebJS/"; // submod path of TinaWebJS
 
 if($type=="social"){
 	$table = "ISIAUTHOR";
@@ -71,7 +71,7 @@ foreach ($wos_ids as $id => $score) {
 	if ($count<$max_item_displayed){
 		$count+=1;
 			$output.="<li title='".$score."'>";
-	$output.=imagestar($score,$factor).' ';	
+	$output.=imagestar($score,$factor,$twjs).' ';	
 	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 
 	foreach ($base->query($sql) as $row) {
@@ -103,7 +103,7 @@ $output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; ####
 $output .= "<br><br><center><a href='#'><img width='50px' onclick='selectionToMap();' title='See the world distribution!' src='".$twjs."img/world.png'></img></a></center>";
 
 
-function imagestar($score,$factor) {
+function imagestar($score,$factor,$twjs) {
 // produit le html des images de score
     $star_image = '';
     if ($score > .5) {
