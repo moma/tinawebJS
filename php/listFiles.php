@@ -12,9 +12,9 @@ $scriptname=end(explode('/',$_SERVER['PHP_SELF']));
 $scriptpath=str_replace($scriptname,'',$_SERVER['PHP_SELF']);
 $scriptpath=str_replace('php/','',$scriptpath);
 $scriptpath=str_replace($_GET["url"],'',$scriptpath);
-$html = "<select style='width:150px;' onchange='
-                window.location=\"http://$_SERVER[SERVER_NAME]$scriptpath\"+\"?file=\"+this.value;
-        '>";
+$windowloc="http://$_SERVER[SERVER_NAME]$scriptpath";
+$javascript="onchange='window.location=\"".$windowloc."\"+\"?file=\"+this.value;'";
+$html = "<select style='width:150px;' ".$javascript.">";
 $html.="<option selected>[Select your Graph]</option>";
 $filesSorted=array();
 foreach($files as $file){
