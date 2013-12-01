@@ -336,7 +336,14 @@ function fullExtract(){
             var id = nodeNode.getAttribute('id');
             var label = nodeNode.getAttribute('label') || id;
             //viz
-            var size = nodeNode.getElementsByTagName('viz:size');//1;
+            var size;
+            sizeRaw = nodeNode.getElementsByTagName('size');//1;;
+            sizeRaw = sizeRaw.length ? sizeRaw : nodeNode.getElementsByTagName('*','viz:size');
+            if(sizeRaw.length>0){
+                size = ""+sizeRaw[0].getAttribute('value');
+                //pr(id+":"+size);
+            }
+            
             var x = 100 - 200*Math.random();
             var y = 100 - 200*Math.random();
             var color;
