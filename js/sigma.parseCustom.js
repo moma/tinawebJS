@@ -330,15 +330,13 @@ function fullExtract(){
             var id = nodeNode.getAttribute('id');
             var label = nodeNode.getAttribute('label') || id;
             //viz
-            var size = 1;
+            var size = nodeNode.getElementsByTagName('viz:size');//1;
             var x = 100 - 200*Math.random();
             var y = 100 - 200*Math.random();
             var color;
       
             var positionNodes = nodeNode.getElementsByTagName('position');
-            positionNodes = positionNodes.length ? 
-            positionNodes : 
-            nodeNode.getElementsByTagNameNS('*','position');
+            positionNodes = positionNodes.length ? positionNodes : nodeNode.getElementsByTagNameNS('*','position');
             if(positionNodes.length>0){
                 var positionNode = positionNodes[0];
                 x = parseFloat(positionNode.getAttribute('x'));
@@ -346,9 +344,7 @@ function fullExtract(){
             }
 
             var colorNodes = nodeNode.getElementsByTagName('color');
-            colorNodes = colorNodes.length ? 
-            colorNodes : 
-            nodeNode.getElementsByTagNameNS('*','color');
+            colorNodes = colorNodes.length ? colorNodes : nodeNode.getElementsByTagNameNS('*','color');
             if(colorNodes.length>0){
                 colorNode = colorNodes[0];
                 color = '#'+sigma.tools.rgbToHex(parseFloat(colorNode.getAttribute('r')),
@@ -378,7 +374,9 @@ function fullExtract(){
                 node.attributes = atts;
                 /*      Para asignar tamaño a los NGrams    */
                 if(atts["category"]===categoriesIndex[1]) {
-                    node.size=parseInt(val).toFixed(2);
+                    if(typeof(node.size)==="undefined"){
+                        node.size=parseInt(val).toFixed(2);
+                    }
 //                
 //                /* Type of Node*/
 //                //console.log(val);
@@ -401,12 +399,12 @@ function fullExtract(){
                 node.shape="square";
                 numberOfDocs++;
                 //node.size=desirableScholarSize;
-                node.size=nodew;
+                if(typeof(node.size)==="undefined") node.size=nodew;
             }
             else {
                 node.type=catSem;
                 numberOfNGrams++;
-                node.size=nodew;
+                if(typeof(node.size)==="undefined") node.size=nodew;
             }      
             
             if(parseInt(node.size) < parseInt(minNodeSize)) minNodeSize= node.size;
