@@ -11,7 +11,9 @@ if(typeof(getUrlParam.file)!=="undefined"){
         else if(nb_cats==2) bringTheNoise(getUrlParam.file,"bi")
         
         $.doTimeout(30,function (){
-            $("#currentGraph").html(getUrlParam.file);
+            if(typeof(gexfDict[getUrlParam.file])!=="undefined"){
+                $("#currentGraph").html(gexfDict[getUrlParam.file]);
+            } else $("#currentGraph").html(getUrlParam.file);
         });            
     });
 } else {
