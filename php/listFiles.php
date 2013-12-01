@@ -13,7 +13,7 @@ $scriptpath=str_replace($scriptname,'',$_SERVER['PHP_SELF']);
 $scriptpath=str_replace('php/','',$scriptpath);
 $scriptpath=str_replace($_GET["url"],'',$scriptpath);
 $windowloc="http://$_SERVER[SERVER_NAME]$scriptpath";
-$javascript="onchange='window.location=\"".$windowloc."\"+\"?file=\"+this.value;'";
+$javascript="onchange='window.location=\"".$windowloc."\"+\"?file=data\/\"+this.value;'";
 $html = "<select style='width:150px;' ".$javascript.">";
 $html.="<option selected>[Select your Graph]</option>";
 $filesSorted=array();
