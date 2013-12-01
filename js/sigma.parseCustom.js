@@ -116,7 +116,7 @@ function onepartiteExtract(){
             var label = nodeNode.getAttribute('label') || id;
                  
             //viz
-            var size = 1;
+            var size = nodeNode.getElementsByTagName('viz:size');//1;;
             var x = 100 - 200*Math.random();
             var y = 100 - 200*Math.random();
             var color;
@@ -170,7 +170,7 @@ function onepartiteExtract(){
             node.id=id;
             node.type = catSoc;
             //if(node.attributes[0].attr=="weight"){
-            node.size=parseInt(node.attributes["weight"]);
+            if(typeof(node.size)==="undefined") node.size=parseInt(node.attributes["weight"]);
             //}
 //            if(node.attributes[1].attr=="weight"){
 //                node.size=node.attributes[1].val;
@@ -374,10 +374,7 @@ function fullExtract(){
                 node.attributes = atts;
                 /*      Para asignar tamaño a los NGrams    */
                 if(atts["category"]===categoriesIndex[1]) {
-                    if(typeof(node.size)==="undefined"){
-                        node.size=parseInt(val).toFixed(2);
-                    }
-//                
+                    if(typeof(node.size)==="undefined") node.size=parseInt(val).toFixed(2);
 //                /* Type of Node*/
 //                //console.log(val);
 //                //if(val<30) val=30;
