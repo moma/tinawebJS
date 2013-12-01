@@ -45,7 +45,7 @@ function bringTheNoise(pathfile,type){
     startMiniMap();
     
     console.log("parsing...");       
-    parse(pathfile);
+    parse(decodeURIComponent(pathfile));
     
     if(type=="mono") {
         onepartiteExtract(); 

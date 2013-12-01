@@ -11,7 +11,7 @@ function parse(gexfPath) {
     new XMLHttpRequest() :
     new ActiveXObject('Microsoft.XMLHTTP');
 
-    gexfhttp.open('GET', "data/"+gexfPath, false);
+    gexfhttp.open('GET', gexfPath, false);
     gexfhttp.send();
     gexf = gexfhttp.responseXML;
 }
