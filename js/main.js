@@ -14,12 +14,29 @@ if(typeof(getUrlParam.file)!=="undefined"){
             if(typeof(gexfDict[getUrlParam.file])!=="undefined"){
                 $("#currentGraph").html(gexfDict[getUrlParam.file]);
             } else $("#currentGraph").html(getUrlParam.file);
+            scanDataFolder();
         });            
     });
 } else {
     window.location.href=window.location.origin+window.location.pathname+"?file="+mainfile;
 }
 
+function scanDataFolder(){
+        $.ajax({
+            type: 'GET',
+            url: twjs+'php/DirScan_main.php',
+            //data: "type="+type+"&query="+jsonparams,
+            //contentType: "application/json",
+            //dataType: 'json',
+            success : function(data){ 
+                console.log(data);
+                dataFolderTree=data;
+            },
+            error: function(){ 
+                console.log('Page Not found: updateLeftPanel_uni()');
+            }
+        });
+}
 
 function listGexfs(){
     $.ajax({
