@@ -7,10 +7,16 @@
 
 $dbs= $_GET["dbs"];//I receive the databases as json!
 $dbs = json_decode($dbs);
-var_dump($dbs);
+$dbname="";//$dbs[0];// data/pathtodb/the.db
+foreach($dbs as $db){
+    if (strpos($db, 'graph.db') !== false){
+        $dbname=$db;
+        break;
+    }
+}
+//var_dump($dbs);
 
 $mainpath=dirname(dirname(getcwd()))."/"; // -> /var/www/ademe/data/pathtodatabase/and.db
-$dbname=$dbs[0];// data/pathtodb/the.db
 ////getDB($mainpath);//'homework-20750-1-homework-db.db';
 $base = new PDO("sqlite:" .$mainpath.$dbname);
 $max_item_displayed=6;
