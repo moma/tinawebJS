@@ -1,6 +1,8 @@
 <?php
 
-include('parameters_details.php');
+//$dbs= $_GET["dbs"];//I receive the databases as json!
+echo "hola";
+/*
 echo '
 <html>
         <head>
@@ -74,7 +76,7 @@ echo '</div>';
 
 
 echo '</div>';
- 
+*/ 
 function pt($string){
     // juste pour afficher avec retour à la ligne
 echo $string."<br/>";
