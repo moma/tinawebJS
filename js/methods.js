@@ -725,7 +725,11 @@ function updateDownNodeEvent(selectionRadius){
 }
 
 function greyEverything(){
-    pr("\t\t\tin grey everything");
+//    pr("\t\t\tin grey everything");
+//    for(var i in deselections){
+//        partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+//    }
+//    deselections={};
     greyColor = '#9b9e9e';
     
     nds = partialGraph._core.graph.nodes.filter(function(n) {
@@ -748,6 +752,17 @@ function greyEverything(){
                 eds[i].color = greyColor;
             }
             eds[i].attr['grey'] = 1;
+    }
+    for(var i in selections){
+        if(typeof(nodes1[i])!=="undefined"){
+            if(typeof(nodes1[i]["neighbours"])!=="undefined"){
+                nb=nodes1[i]["neighbours"];
+                for(var j in nb){
+                    deselections[nb[j]]=1;
+                    partialGraph._core.graph.nodesIndex[nb[j]].forceLabel=true;
+                }
+            }
+        }
     }
 }
 
