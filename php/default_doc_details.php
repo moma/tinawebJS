@@ -22,8 +22,8 @@ echo '
     <body>
     <div id="tabs">
   <ul>
-    <li><a href="#tabs-1">Selected Document</a></li>';
-    //<li><a href="#tabs-2">Starred</a></li>    
+    <li><a href="#tabs-1">Selected Document</a></li>
+    <li><a href="#tabs-2">Full list</a></li>';    
   echo '</ul>';
 
 echo '<div id="tabs-1">';
@@ -35,15 +35,30 @@ $id=$_GET["id"];
 		$output.='<h2>'.$row['data'].'</h2>';
 		$find.="<br/><a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target='blank'>[ Search on the web ] </a>";		
 	}
-	// get the authors
-	$sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
-	foreach ($base->query($sql) as $row) {
-		$output.=strtoupper($row['data']).', ';
-	}
-	$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
-	foreach ($base->query($sql) as $row) {
-		$output.='('.$row['data'].') ';
-	}
+  // get the authors
+  $sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
+  foreach ($base->query($sql) as $row) {
+    $output.=strtoupper($row['data']).', ';
+  }
+  // get the date
+  $sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
+  foreach ($base->query($sql) as $row) {
+    $output.='('.$row['data'].')<br/> ';
+  }
+
+  // get the date
+  $sql = 'SELECT data FROM ISIterms WHERE id='.$id;
+  $output.='<br/><b>Keywords: </b>';
+  $terms=array();
+  foreach ($base->query($sql) as $row) {
+    $terms[]=$row['data'];
+  }
+  natsort($terms);
+  $terms=array_unique($terms); // liste des termes de l'article
+  foreach ($terms as $key => $value) {
+    $output.=$value.', ';
+  }
+
 	$sql = 'SELECT data FROM ISIABSTRACT WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
 		$output.='<br/><p><b>Abstract : </b><i>'.$row['data'].' </i></p>';

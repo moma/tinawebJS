@@ -35,20 +35,20 @@ if($type=="semantic"){
 }
 
 $sql = 'SELECT count(*),'.$id.'
-	FROM '.$table.' where (';
+FROM '.$table.' where (';
 
 
-foreach($elems as $elem){
-	$sql.=' '.$column.'="'.$elem.'" OR ';
-}
+	foreach($elems as $elem){
+		$sql.=' '.$column.'="'.$elem.'" OR ';
+	}
 #$querynotparsed=$sql;#####
-$sql = substr($sql, 0, -3);
-$sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
+	$sql = substr($sql, 0, -3);
+	$sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
 
-$sql.=')'.$restriction.'
-	GROUP BY '.$id.'
-	ORDER BY count('.$id.') DESC
-	LIMIT 1000';
+	$sql.=')'.$restriction.'
+GROUP BY '.$id.'
+ORDER BY count('.$id.') DESC
+LIMIT 1000';
 
 #$queryparsed=$sql;#####
 
@@ -57,10 +57,12 @@ $sum=0;
 
 //echo $sql;//The final query!
 // array of all relevant documents with score
-
-foreach ($base->query($sql) as $row) {
+foreach ($base->query($sql) as $row) {	
+	// on pondère le score par le nombre de termes mentionnés par l'article
+	
+	//$num_rows = $result->numRows();
 	$wos_ids[$row[$id]] = $row["count(*)"];
-        $sum = $row["count(*)"] +$sum;
+	$sum = $row["count(*)"] +$sum;
 }
 
 #$afterquery=json_encode($wos_ids);#####
@@ -70,33 +72,33 @@ $count=0;
 foreach ($wos_ids as $id => $score) {
 	if ($count<$max_item_displayed){
 		$count+=1;
-			$output.="<li title='".$score."'>";
-	$output.=imagestar($score,$factor,$twjs).' ';	
-	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
+		$output.="<li title='".$score."'>";
+		$output.=imagestar($score,$factor,$twjs).' ';	
+		$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 
-	foreach ($base->query($sql) as $row) {
-		$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
-		$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
+		foreach ($base->query($sql) as $row) {
+			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
+			$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
 		//$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>';	
-	}
+		}
 
 	// get the authors
-	$sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
-	foreach ($base->query($sql) as $row) {
-		$output.=strtoupper($row['data']).', ';
-	}
-	$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
-	foreach ($base->query($sql) as $row) {
-		$output.='('.$row['data'].') ';
-	}
+		$sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
+		foreach ($base->query($sql) as $row) {
+			$output.=strtoupper($row['data']).', ';
+		}
+		$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
+		foreach ($base->query($sql) as $row) {
+			$output.='('.$row['data'].') ';
+		}
 
-	
+
 
 	//<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'
 
-	$output.=$external_link."</li><br>";
+		$output.=$external_link."</li><br>";
 	}else{
-	continue;
+		continue;
 	}
 }
 $output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; #####
@@ -105,16 +107,16 @@ $output .= "<br><br><center><a href='#'><img width='50px' onclick='selectionToMa
 
 function imagestar($score,$factor,$twjs) {
 // produit le html des images de score
-    $star_image = '';
-    if ($score > .5) {
-        $star_image = '';
-        for ($s = 0; $s < min(5,$score/$factor); $s++) {
-            $star_image.='<img src="'.$twjs.'img/star.gif" border="0" >';
-        }
-    } else {
-        $star_image.='<img src="'.$twjs.'img/stargrey.gif" border="0">';
-    }
-    return $star_image;
+	$star_image = '';
+	if ($score > .5) {
+		$star_image = '';
+		for ($s = 0; $s < min(5,$score/$factor); $s++) {
+			$star_image.='<img src="'.$twjs.'img/star.gif" border="0" >';
+		}
+	} else {
+		$star_image.='<img src="'.$twjs.'img/stargrey.gif" border="0">';
+	}
+	return $star_image;
 }
 
 echo $output;
