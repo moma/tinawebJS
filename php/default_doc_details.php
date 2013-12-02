@@ -1,6 +1,9 @@
 <?php
 
+$db= $_GET["db"];//I receive the specific database as string!
 include('parameters_details.php');
+$base = new PDO("sqlite:" .$mainpath.$db);
+
 echo '
 <html>
         <head>
@@ -74,7 +77,7 @@ echo '</div>';
 
 
 echo '</div>';
- 
+
 function pt($string){
     // juste pour afficher avec retour à la ligne
 echo $string."<br/>";
