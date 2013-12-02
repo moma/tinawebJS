@@ -10,6 +10,21 @@ function trackMouse() {
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 1;
     ctx.beginPath();
+    
+    if(partialGraph._core.mousecaptor.ratio>showLabelsIfZoom){
+        partialGraph.iterNodes(function(n){
+                if(n.hidden==false){
+                    distance = Math.sqrt(
+                        Math.pow((x-parseInt(n.displayX)),2) +
+                        Math.pow((y-parseInt(n.displayY)),2)
+                        );
+                    if(parseInt(distance)<=cursor_size) {
+                        n.forceLabel=true;
+                    } else n.forceLabel=false;
+                }
+        });
+        partialGraph.draw();
+    }
     ctx.arc(x, y, cursor_size, 0, Math.PI * 2, true);
     //ctx.arc(partialGraph._core.width/2, partialGraph._core.height/2, 4, 0, 2 * Math.PI, true);/*todel*/
     ctx.closePath();
