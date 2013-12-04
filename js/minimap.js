@@ -23,7 +23,7 @@ function trackMouse() {
                     } else n.forceLabel=false;
                 }
         });
-        partialGraph.draw();
+        partialGraph.draw(2,2,2);
     }
     ctx.arc(x, y, cursor_size, 0, Math.PI * 2, true);
     //ctx.arc(partialGraph._core.width/2, partialGraph._core.height/2, 4, 0, 2 * Math.PI, true);/*todel*/
