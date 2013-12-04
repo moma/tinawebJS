@@ -142,7 +142,6 @@ function cancelSelection (fromTagCloud) {
         partialGraph._core.graph.nodesIndex[i].forceLabel=false;
     }
     deselections={};
-    deselections.splice(0, deselections.length);
     partialGraph.draw();
 }
 
