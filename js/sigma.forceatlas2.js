@@ -975,5 +975,5 @@ sigma.publicPrototype.stopForceAtlas2 = function() {
   this.removeGenerator('forceatlas2');
   updateMap();
   partialGraph.refresh();
-  $("#overviewzone").show();
+  if(minimap) $("#overviewzone").show();
 };

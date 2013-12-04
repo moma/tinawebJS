@@ -148,7 +148,6 @@ function onGraphScroll(evt, delta) {
 }
 
 function initializeMap() {
-    if(minimap){
         clearInterval(partialGraph.timeRefresh);
         partialGraph.oldParams = {};
         $("#zoomSlider").slider({
@@ -165,6 +164,7 @@ function initializeMap() {
                     ui.value);
             }
         });
+    if(minimap){
         $("#overviewzone").css({
             width : overviewWidth + "px",
             height : overviewHeight + "px"
