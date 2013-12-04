@@ -137,7 +137,13 @@ function cancelSelection (fromTagCloud) {
         $("#searchinput").val("");
         $("#switchbutton").hide();
         $("#tips").html(getTips());
+    }   
+    for(var i in deselections){
+        partialGraph._core.graph.nodesIndex[i].forceLabel=false;
     }
+    deselections={};
+    deselections.splice(0, selections.length);
+    partialGraph.draw();
 }
 
 function highlightSelectedNodes(flag){  
