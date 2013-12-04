@@ -29,6 +29,17 @@ function trackMouse() {
                 }
         }
         partialGraph.draw(2,2,2);
+    } else {
+        for(var i in partialGraph._core.graph.nodesIndex){
+            if(!n.hidden){
+                partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+                if(typeof(n.neighbour)!=="undefined") {
+                    if(!n.neighbour) partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+                    else partialGraph._core.graph.nodesIndex[i].forceLabel=true;
+                } else partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+            }
+        }
+        partialGraph.draw(2,2,2);
     }
     ctx.arc(x, y, cursor_size, 0, Math.PI * 2, true);
     //ctx.arc(partialGraph._core.width/2, partialGraph._core.height/2, 4, 0, 2 * Math.PI, true);/*todel*/
