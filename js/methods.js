@@ -140,6 +140,7 @@ function cancelSelection (fromTagCloud) {
     }   
     for(var i in deselections){
         partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+        partialGraph._core.graph.nodesIndex[i].neighbour=false;
     }
     deselections={};
     partialGraph.draw();
@@ -765,6 +766,7 @@ function greyEverything(){
                 for(var j in nb){
                     deselections[nb[j]]=1;
                     partialGraph._core.graph.nodesIndex[nb[j]].forceLabel=true;
+                    partialGraph._core.graph.nodesIndex[nb[j]].neighbour=true;
                 }
             }
         }

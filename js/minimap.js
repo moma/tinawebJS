@@ -12,17 +12,22 @@ function trackMouse() {
     ctx.beginPath();
     
     if(partialGraph._core.mousecaptor.ratio>showLabelsIfZoom){
-        partialGraph.iterNodes(function(n){
+        for(var i in partialGraph._core.graph.nodesIndex){
+                n=partialGraph._core.graph.nodesIndex[i];
                 if(n.hidden==false){
                     distance = Math.sqrt(
                         Math.pow((x-parseInt(n.displayX)),2) +
                         Math.pow((y-parseInt(n.displayY)),2)
                         );
                     if(parseInt(distance)<=cursor_size) {
-                        n.forceLabel=true;
-                    } else n.forceLabel=false;
+                        partialGraph._core.graph.nodesIndex[i].forceLabel=true;
+                    } else {
+                        if(typeof(n.neighbour)!=="undefined") {
+                            if(!n.neighbour) partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+                        } else partialGraph._core.graph.nodesIndex[i].forceLabel=false;
+                    }
                 }
-        });
+        }
         partialGraph.draw(2,2,2);
     }
     ctx.arc(x, y, cursor_size, 0, Math.PI * 2, true);
