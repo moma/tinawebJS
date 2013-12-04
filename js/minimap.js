@@ -148,55 +148,58 @@ function onGraphScroll(evt, delta) {
 }
 
 function initializeMap() {
-    clearInterval(partialGraph.timeRefresh);
-    partialGraph.oldParams = {};
-    $("#zoomSlider").slider({
-        orientation: "vertical",
-        value: partialGraph.position().ratio,
-        min: sigmaJsMouseProperties.minRatio,
-        max: sigmaJsMouseProperties.maxRatio,
-        range: "min",
-        step: 0.1,
-        slide: function( event, ui ) {
-            partialGraph.zoomTo(
-                partialGraph._core.width / 2, 
-                partialGraph._core.height / 2, 
-                ui.value);
-        }
-    });
-    $("#overviewzone").css({
-        width : overviewWidth + "px",
-        height : overviewHeight + "px"
-    });
-    $("#overview").attr({
-        width : overviewWidth,
-        height : overviewHeight
-    });
-    partialGraph.timeRefresh = setInterval(traceMap,60);
+    if(minimap){
+        clearInterval(partialGraph.timeRefresh);
+        partialGraph.oldParams = {};
+        $("#zoomSlider").slider({
+            orientation: "vertical",
+            value: partialGraph.position().ratio,
+            min: sigmaJsMouseProperties.minRatio,
+            max: sigmaJsMouseProperties.maxRatio,
+            range: "min",
+            step: 0.1,
+            slide: function( event, ui ) {
+                partialGraph.zoomTo(
+                    partialGraph._core.width / 2, 
+                    partialGraph._core.height / 2, 
+                    ui.value);
+            }
+        });
+        $("#overviewzone").css({
+            width : overviewWidth + "px",
+            height : overviewHeight + "px"
+        });
+        $("#overview").attr({
+            width : overviewWidth,
+            height : overviewHeight
+        });
+        partialGraph.timeRefresh = setInterval(traceMap,60);
+    }
 }
 
 function updateMap(){
-    
-    partialGraph.imageMini="";
-    partialGraph.ctxMini="";
-    partialGraph.ctxMini = document.getElementById('overview').getContext('2d');
-    partialGraph.ctxMini.clearRect(0, 0, overviewWidth, overviewHeight);
-    
-    partialGraph.iterNodes(function(n){
-        if(n.hidden==false){
-            partialGraph.ctxMini.fillStyle = n.color;
-            partialGraph.ctxMini.beginPath();
-            numPosibilidades = 2.5 - 0.9;
-            aleat = Math.random() * numPosibilidades;
-            partialGraph.ctxMini.arc(((n.displayX/1.2)-200)*0.25 , ((n.displayY/1.2)+110)*0.25 , (0.9 + aleat)*0.25+1 , 0 , Math.PI*2 , true);
-            //        //console.log(n.x*1000 +" * 0.25"+" _ "+ n.y*1000 +" * 0.25"+" _ "+ (0.9 + aleat) +" * 0.25 + 1");
-            //        
-            partialGraph.ctxMini.closePath();
-            partialGraph.ctxMini.fill();
-        }
-    //        
-    });
-    partialGraph.imageMini = partialGraph.ctxMini.getImageData(0, 0, overviewWidth, overviewHeight);
+    if(minimap){    
+        partialGraph.imageMini="";
+        partialGraph.ctxMini="";
+        partialGraph.ctxMini = document.getElementById('overview').getContext('2d');
+        partialGraph.ctxMini.clearRect(0, 0, overviewWidth, overviewHeight);
+
+        partialGraph.iterNodes(function(n){
+            if(n.hidden==false){
+                partialGraph.ctxMini.fillStyle = n.color;
+                partialGraph.ctxMini.beginPath();
+                numPosibilidades = 2.5 - 0.9;
+                aleat = Math.random() * numPosibilidades;
+                partialGraph.ctxMini.arc(((n.displayX/1.2)-200)*0.25 , ((n.displayY/1.2)+110)*0.25 , (0.9 + aleat)*0.25+1 , 0 , Math.PI*2 , true);
+                //        //console.log(n.x*1000 +" * 0.25"+" _ "+ n.y*1000 +" * 0.25"+" _ "+ (0.9 + aleat) +" * 0.25 + 1");
+                //        
+                partialGraph.ctxMini.closePath();
+                partialGraph.ctxMini.fill();
+            }
+        //        
+        });
+        partialGraph.imageMini = partialGraph.ctxMini.getImageData(0, 0, overviewWidth, overviewHeight);
+    }
 }
 
 function traceMap() {
@@ -219,9 +222,11 @@ function traceMap() {
 }
 
 function startMiniMap(){
-    partialGraph.ctxMini = document.getElementById('overview').getContext('2d'); 
-    partialGraph.ctxMini.clearRect(0, 0, overviewWidth, overviewHeight);
-    partialGraph.totalScroll=0;    
-    partialGraph.centreX = partialGraph._core.width/2;
-    partialGraph.centreY = partialGraph._core.heigth/2;
+    if(minimap){
+        partialGraph.ctxMini = document.getElementById('overview').getContext('2d'); 
+        partialGraph.ctxMini.clearRect(0, 0, overviewWidth, overviewHeight);
+        partialGraph.totalScroll=0;    
+        partialGraph.centreX = partialGraph._core.width/2;
+        partialGraph.centreY = partialGraph._core.heigth/2;
+    }
 }
