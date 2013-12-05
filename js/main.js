@@ -359,9 +359,9 @@ function bringTheNoise(pathfile,type){
         }
     });
     $("#sliderSelectionZone").slider({
-        value: cursor_size * 5.0,
-        min: 0.0,
-        max: 150.0,
+        value: cursor_size,
+        min: parseFloat(cursor_size_min),
+        max: parseFloat(cursor_size_max),
         animate: true,
         change: function(event, ui) {
             cursor_size= ui.value;
