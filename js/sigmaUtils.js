@@ -49,3 +49,14 @@ function exactfind(label) {
     }
     return null;
 }
+
+function cloneObject(source) {
+    for (i in source) {
+        if (typeof source[i] == 'source') {
+            this[i] = new cloneObject(source[i]);
+        }
+        else{
+            this[i] = source[i];
+	}
+    }
+}
