@@ -31,6 +31,7 @@ function trackMouse() {
         partialGraph.draw(2,2,2);
     } else {
         for(var i in partialGraph._core.graph.nodesIndex){
+            n=partialGraph._core.graph.nodesIndex[i];
             if(!n.hidden){
                 partialGraph._core.graph.nodesIndex[i].forceLabel=false;
                 if(typeof(n.neighbour)!=="undefined") {
