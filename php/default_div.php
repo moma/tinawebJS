@@ -1,6 +1,10 @@
 <?php
 // default informations
 
+$thedb = $graphdb;
+// just for papers detail for ademe
+$isAdeme=$_SERVER["PHP_SELF"];
+if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
 
 $output = "<ul>"; // string sent to the javascript for display
 
@@ -77,7 +81,7 @@ foreach ($wos_ids as $id => $score) {
 		$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 
 		foreach ($base->query($sql) as $row) {
-			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($graphdb).'&id='.$id.'	\')">'.$row['data']." </a> ";
+			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&id='.$id.'	\')">'.$row['data']." </a> ";
                         
                         //this should be the command:
 			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'	\')">'.$row['data']." </a> ";	
