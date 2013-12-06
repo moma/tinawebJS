@@ -1,6 +1,13 @@
 <?php
 // manage the dynamical additional information in the left panel.
 include('parameters_details.php');
-$base = new PDO("sqlite:" .$mainpath.$graphdb);
+
+// info_div should extract the info from *data.db
+// if the rock proj has this in rule, we'll remove this "exception"
+$isAdeme=$_SERVER["PHP_SELF"];
+if (strpos($isAdeme, 'ademe') !== false) $base = new PDO("sqlite:" .$mainpath.$datadb);
+else $base = new PDO("sqlite:" .$mainpath.$graphdb);
+
+
 include('default_div.php');
 ?>
