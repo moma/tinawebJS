@@ -344,12 +344,15 @@ function fullExtract(){
             var id = nodeNode.getAttribute('id');
             var label = nodeNode.getAttribute('label') || id;
             //viz
-            var size;
-            sizeRaw = nodeNode.getElementsByTagName('size');//1;;
-            sizeRaw = sizeRaw.length ? sizeRaw : nodeNode.getElementsByTagName('*','viz:size');
-            if(sizeRaw.length>0){
-                size = ""+sizeRaw[0].getAttribute('value');
-                //pr(id+":"+size);
+            
+            var size=1;
+            sizeNodes = nodeNode.getElementsByTagName('size');
+            sizeNodes = sizeNodes.length ?
+                        sizeNodes :
+                        nodeNode.getElementsByTagName('viz:size');
+            if(sizeNodes.length>0){
+              sizeNode = sizeNodes[0];
+              size = parseFloat(sizeNode.getAttribute('value'));
             }
             
             var x = 100 - 200*Math.random();
