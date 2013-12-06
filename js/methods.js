@@ -167,6 +167,9 @@ function highlightSelectedNodes(flag){
         
     }
 }
+function alertCheckBox(eventCheck){    
+    if((typeof eventCheck.checked)!="undefined") checkBox=eventCheck.checked;
+}
 
 function pushSWClick(arg){
     swclickPrev = swclickActual;
