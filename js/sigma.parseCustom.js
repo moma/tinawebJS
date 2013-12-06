@@ -262,8 +262,14 @@ function onepartiteExtract(){
                     neighbours: []
                 };
                 nodes1[source].neighbours.push(target);
-            }
-            else nodes1[source].neighbours.push(target);
+            } else nodes1[source].neighbours.push(target);        
+            if((typeof nodes1[target])=="undefined"){
+                nodes1[target] = {
+                    label: Nodes[target].label,
+                    neighbours: []
+                };
+                nodes1[target].neighbours.push(source);
+            } else nodes1[target].neighbours.push(source);
             Edges[indice] = edge;
             if( (typeof partialGraph._core.graph.edgesIndex[target+";"+source])=="undefined" ){
                 partialGraph.addEdge(indice,source,target,edge);
