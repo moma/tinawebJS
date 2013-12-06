@@ -60,3 +60,11 @@ function cloneObject(source) {
 	}
     }
 }
+
+function getSelections(){    
+        params=[];
+        for(var i in selections){
+            params.push(Nodes[i].label);
+        }
+        return params;
+}
