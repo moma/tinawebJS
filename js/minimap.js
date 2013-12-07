@@ -1,5 +1,6 @@
 
 function trackMouse() {
+    $.doTimeout(200,function (){
     var ctx = partialGraph._core.domElements.mouse.getContext('2d');
     ctx.globalCompositeOperation = "source-over";
     ctx.clearRect(0, 0, partialGraph._core.domElements.nodes.width, partialGraph._core.domElements.nodes.height);
@@ -46,7 +47,7 @@ function trackMouse() {
     //ctx.arc(partialGraph._core.width/2, partialGraph._core.height/2, 4, 0, 2 * Math.PI, true);/*todel*/
     ctx.closePath();
     ctx.stroke();
-    
+    });
 };
 
 function changeGraphPosition(evt, echelle) {
