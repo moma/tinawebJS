@@ -4,7 +4,7 @@
 $thedb = $graphdb;
 // just for papers detail for ademe
 $isAdeme=$_SERVER["PHP_SELF"];
-if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
+//if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
 
 $output = "<ul>"; // string sent to the javascript for display
 
