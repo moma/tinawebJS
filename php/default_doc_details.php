@@ -3,7 +3,6 @@
 $db= $_GET["db"];//I receive the specific database as string!
 include('parameters_details.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
-
 echo '
 <html>
         <head>
@@ -26,7 +25,7 @@ echo '
     <div id="tabs">
   <ul>
     <li><a href="#tabs-1">Selected Document</a></li>
-    <li><a href="#tabs-2">Full list</a></li>';    
+    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.urlencode($_GET["type"]).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'">Full list</a></li>';    
   echo '</ul>';
 
 echo '<div id="tabs-1">';

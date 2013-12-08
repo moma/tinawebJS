@@ -54,6 +54,7 @@ GROUP BY '.$id.'
 ORDER BY count('.$id.') DESC
 LIMIT 1000';
 
+
 #$queryparsed=$sql;#####
 
 $wos_ids = array();
@@ -81,7 +82,7 @@ foreach ($wos_ids as $id => $score) {
 		$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 
 		foreach ($base->query($sql) as $row) {
-			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&id='.$id.'	\')">'.$row['data']." </a> ";
+			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
                         
                         //this should be the command:
 			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'	\')">'.$row['data']." </a> ";	
