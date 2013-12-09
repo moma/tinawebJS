@@ -12,7 +12,7 @@
 
 #tabs .ui-tabs-nav { 
     height: 2.35em; 
-    text-align: center; 
+    text-align: left; 
 } 
 #tabs .ui-tabs-nav li { 
     display: inline-block; 
