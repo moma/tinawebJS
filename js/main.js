@@ -69,11 +69,10 @@ function bringTheNoise(pathfile,type){
     if(type=="mono") {
         onepartiteExtract(); 
         $("#left").hide();
-    }
-    else if(type=="bi") {
+    } else if(type=="bi") {
         fullExtract(); 
     }
-    
+    if(fa2enabled==="off") $("#edgesButton").hide();
     updateEdgeFilter("social");
     updateNodeFilter("social");
     pushSWClick("social");
@@ -314,6 +313,10 @@ function bringTheNoise(pathfile,type){
     });
     
     $("#edgesButton").click(function () {
+        if(fa2enabled===false){
+            edgesTF=true;
+            fa2enabled=true;
+        }
         if(edgesTF==false){
             partialGraph.stopForceAtlas2();
             partialGraph.draw();
