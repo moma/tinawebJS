@@ -45,7 +45,8 @@ function getGexfPath(v){
 }
 
 function getGexfLegend(gexfPath){
-    return gexfDict[gexfPath];
+    legend=(gexfDict[gexfPath])?gexfDict[gexfPath]:gexfPath;
+    return legend;
 }
 
 function jsActionOnGexfSelector(gexfLegend){
