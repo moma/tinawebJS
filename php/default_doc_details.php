@@ -63,7 +63,12 @@ $id=$_GET["id"];
 
 	$sql = 'SELECT data FROM ISIABSTRACT WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
-		$output.='<br/><p><b>Abstract : </b><i>'.$row['data'].' </i></p>';
+    $abs=$row['data'];
+
+    $abs=str_replace('ISSUES:'  ,'<br/><br/><b>ISSUES:</b>',$abs);
+    $abs=str_replace('IMPACT:'  ,'<br/><br/><b>IMPACT:</b>',$abs);
+    $abs=str_replace('NOVELTY:'  ,'<br/><br/><b>NOVELTY:</b>',$abs);
+		$output.='<br/><p><b>Abstract : </b><i>'.$abs.' </i></p>';
 		$output.="<br>";		
 	}
 

@@ -81,15 +81,14 @@ $project_folder=$temp[1];
 $year='2013';
 
 // identification d'une année pour echoing
-if ($project_folder='echoing'){
+if ($project_folder=='echoing'){
 	$year_filter=true;	
 	$additional_quesry_filter=' AND year =2012';
 
-}else{
-	$year_filter=false;
+}elseif($project_folder=='nci'){
+	$year_filter=true;
+
 }
-
-
 
 $number_doc=count($wos_ids);
 $count=0;
@@ -103,12 +102,18 @@ foreach ($wos_ids as $id => $score) {
 
 		// to filter under some conditions
 		$to_display=true; 
-		if ($project_folder='echoing'){
+		if ($project_folder=='echoing'){
 			if ($year_filter){
 				if ($pubdate!=$year){
 					$to_display=false;
 				}
 			}			
+		}elseif($project_folder=='nci'){
+			if ($year_filter){
+				if ($pubdate!='1994'){
+					$to_display=false;
+				}
+			}	
 		}
 
 		if ($to_display){
@@ -135,10 +140,14 @@ foreach ($wos_ids as $id => $score) {
 			foreach ($base->query($sql) as $row) {
 				$output.=strtoupper($row['data']).', ';
 			}
-			$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
-			foreach ($base->query($sql) as $row) {
-				$output.='('.$pubdate.') ';
-			}
+
+				if($project_folder!='nci'){
+				
+					$output.='('.$pubdate.') ';
+				
+			}else {
+					$output.='(2013) ';
+				}
 
 
 
