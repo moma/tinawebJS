@@ -159,6 +159,7 @@ function bringTheNoise(pathfile,type){
         }
         return false;
     });
+    $("#aUnfold").click();
     
     
     /******************* /SEARCH ***********************/
@@ -211,8 +212,8 @@ function bringTheNoise(pathfile,type){
     
     $("#searchinput").keydown(function (e) {
         if (e.keyCode == 13 && $("input#searchinput").data('is_open') === true) {
+            // Search has several results and you pressed ENTER
             if(!is_empty(matches)) {
-                pr("im here");
                 checkBox=true;
                 for(j=0;j<matches.length;j++){
                     nodeFound=searchLabel(matches[j].label);
@@ -227,6 +228,7 @@ function bringTheNoise(pathfile,type){
                 }
                 else {
                     greyEverything();
+                    overNodes=true;
                     for(var i in selections){
                         markAsSelected(i,true);
                     }
@@ -244,6 +246,7 @@ function bringTheNoise(pathfile,type){
     
     $("#searchinput").keyup(function (e) {
         if (e.keyCode == 13 && $("input#searchinput").data('is_open') !== true) {
+            pr("search KEY UP");
             var s = $("#searchinput").val();
             $("#searchinput").val(strSearchBar);
             if(categoriesIndex.length==1) updateLeftPanel_uni();
@@ -252,7 +255,7 @@ function bringTheNoise(pathfile,type){
     });
     
     $("#searchsubmit").click(function () {
-        pr("in searchsubmit()");
+        pr("searchsubmit CLICK");
         var s = $("#searchinput").val();
         search(s);
         $("#searchinput").val(strSearchBar);
