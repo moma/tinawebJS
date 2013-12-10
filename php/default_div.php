@@ -77,16 +77,19 @@ foreach ($base->query($sql) as $row) {
 // extracting the project folder and the year
 $temp=explode('/',$thedb);
 $project_folder=$temp[1];
-$year='2013';
+if (strpos($gexf,'2013')>0){
+	$year='2013';	
+	$year_filter=true;
+}elseif (strpos($gexf,'2012')>0){
+	$year='2012';
+	$year_filter=true;
+}else{
+	$year_filter=false;
+}
 
 // identification d'une année pour echoing
-if ($project_folder=='echoing'){
-	$year_filter=true;	
-	$additional_quesry_filter=' AND year =2012';
-
-}elseif($project_folder=='nci'){
+if($project_folder=='nci'){
 	$year_filter=true;
-
 }
 
 $number_doc=count($wos_ids);
