@@ -159,6 +159,7 @@ function bringTheNoise(pathfile,type){
         }
         return false;
     });
+    $("#aUnfold").click();
     
     
     /******************* /SEARCH ***********************/
