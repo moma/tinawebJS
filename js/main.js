@@ -66,6 +66,9 @@ function listGexfs(){
             html+=">";
             html+='<option selected>[Select your Graph]</option>';
             for(var i in data){
+                pr("path: "+data[i]);
+                pr("legend: "+getGexfLegend(data[i]));
+                pr("");
                 html+="<option>"+getGexfLegend(data[i])+"</option>";
             }
             html+="</select>";
