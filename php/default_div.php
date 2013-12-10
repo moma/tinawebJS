@@ -3,7 +3,6 @@
 
 $thedb = $graphdb;
 $gexf=$_GET["gexf"];
-echo $gexf;
 // just for papers detail for ademe
 $isAdeme=$_SERVER["PHP_SELF"];
 //if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
@@ -144,7 +143,7 @@ foreach ($wos_ids as $id => $score) {
 				if($project_folder!='nci'){
 				
 					$output.='('.$pubdate.') ';
-				
+					
 			}else {
 					$output.='(2013) ';
 				}
