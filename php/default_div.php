@@ -77,6 +77,7 @@ foreach ($base->query($sql) as $row) {
 // extracting the project folder and the year
 $temp=explode('/',$thedb);
 $project_folder=$temp[1];
+echo $gexf;
 if (strpos($gexf,'2013')>0){
 	$year='2013';	
 	$year_filter=true;
