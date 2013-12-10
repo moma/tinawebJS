@@ -9,5 +9,5 @@ $isAdeme=$_SERVER["SCRIPT_FILENAME"];
 //else $base = new PDO("sqlite:" .$mainpath.$graphdb);
 $base = new PDO("sqlite:" .$mainpath.$graphdb);
 
-include('rock_div.php');
+include('default_div.php');
 ?>

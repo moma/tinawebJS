@@ -2,6 +2,8 @@
 // default informations
 
 $thedb = $graphdb;
+$gexf=$_GET["gexf"];
+echo $gexf;
 // just for papers detail for ademe
 $isAdeme=$_SERVER["PHP_SELF"];
 //if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
@@ -70,44 +72,81 @@ foreach ($base->query($sql) as $row) {
 	$sum = $row["count(*)"] +$sum;
 }
 
-#$afterquery=json_encode($wos_ids);#####
+
+///// Specific to rock //////////
+// Other restrictions
+// extracting the project folder and the year
+$temp=explode('/',$thedb);
+$project_folder=$temp[1];
+$year='2013';
+
+// identification d'une année pour echoing
+if ($project_folder='echoing'){
+	$year_filter=true;	
+	$additional_quesry_filter=' AND year =2012';
+
+}else{
+	$year_filter=false;
+}
+
+
 
 $number_doc=count($wos_ids);
 $count=0;
-foreach ($wos_ids as $id => $score) {
+foreach ($wos_ids as $id => $score) {	
 	if ($count<$max_item_displayed){
-		$count+=1;
-		$output.="<li title='".$score."'>";
-		$output.=imagestar($score,$factor,$twjs).' ';	
-		$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
-
-		foreach ($base->query($sql) as $row) {
-			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
-                        
-                        //this should be the command:
-			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'	\')">'.$row['data']." </a> ";	
-                        
-                        //the old one:	
-			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
-			$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
-		//$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>';	
-		}
-
-	// get the authors
-		$sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
-		foreach ($base->query($sql) as $row) {
-			$output.=strtoupper($row['data']).', ';
-		}
+		// retrieve publication year
 		$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
 		foreach ($base->query($sql) as $row) {
-			$output.='('.$row['data'].') ';
+			$pubdate=$row['data'];
 		}
+
+		// to filter under some conditions
+		$to_display=true; 
+		if ($project_folder='echoing'){
+			if ($year_filter){
+				if ($pubdate!=$year){
+					$to_display=false;
+				}
+			}			
+		}
+
+		if ($to_display){
+
+			$count+=1;
+			$output.="<li title='".$score."'>";
+			$output.=imagestar($score,$factor,$twjs).' ';	
+			$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
+
+			foreach ($base->query($sql) as $row) {
+				$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
+
+                        //this should be the command:
+			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'	\')">'.$row['data']." </a> ";	
+
+                        //the old one:	
+			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
+				$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
+		//$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>';	
+			}
+
+	// get the authors
+			$sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
+			foreach ($base->query($sql) as $row) {
+				$output.=strtoupper($row['data']).', ';
+			}
+			$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
+			foreach ($base->query($sql) as $row) {
+				$output.='('.$pubdate.') ';
+			}
 
 
 
 	//<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'
 
-		$output.=$external_link."</li><br>";
+			$output.=$external_link."</li><br>";			
+		}
+
 	}else{
 		continue;
 	}
