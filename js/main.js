@@ -38,15 +38,42 @@ function scanDataFolder(){
         });
 }
 
+
+function getGexfPath(v){
+	gexfpath=(gexfDictReverse[v])?gexfDictReverse[v]:v;
+        return gexfpath;
+}
+
+function getGexfLegend(gexfPath){
+    legend=(gexfDict[gexfPath])?gexfDict[gexfPath]:gexfPath;
+    return legend;
+}
+
+function jsActionOnGexfSelector(gexfLegend){
+    window.location=window.location.origin+window.location.pathname+"?file="+encodeURIComponent(getGexfPath(gexfLegend));
+}
+
 function listGexfs(){
+    param = JSON.stringify(gexfDict);
     $.ajax({
         type: 'GET',
         url: twjs+'php/listFiles.php',
-        data: "url="+twjs,
         //contentType: "application/json",
         //dataType: 'json',
         success : function(data){ 
-            $("#gexfs").html(data);
+            html="<select style='width:150px;' ";
+            javs='onchange="'+'jsActionOnGexfSelector(this.value);'+'"';
+            html+=javs;
+            html+=">";
+            html+='<option selected>[Select your Graph]</option>';
+            for(var i in data){
+                pr("path: "+data[i]);
+                pr("legend: "+getGexfLegend(data[i]));
+                pr("");
+                html+="<option>"+getGexfLegend(data[i])+"</option>";
+            }
+            html+="</select>";
+            $("#gexfs").html(html);
         },
         error: function(){ 
             console.log("Page Not found.");
