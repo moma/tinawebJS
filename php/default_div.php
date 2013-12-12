@@ -9,9 +9,6 @@ $isAdeme=$_SERVER["PHP_SELF"];
 $output = "<ul>"; // string sent to the javascript for display
 
 #http://localhost/branch_ademe/php/test.php?type=social&query=[%22marwah,%20m%22]
-#http://localhost/branch_ademe/php/test.php?type=social&query=[%22murakami,%20s%22,%22tasaki,%20t%22,%22oguchi,%20m%22,%22daigo,%20i%22]
-
-#http://localhost/branch_ademe/php/test.php?type=semantic&query=[%22life%20span%22,%22Japan%22]
 
 
 $type = $_GET["type"];
@@ -21,6 +18,29 @@ $elems = json_decode($query);
 $sql='SELECT COUNT(*) FROM ISIABSTRACT';
 foreach ($base->query($sql) as $row) {
 	$table_size=$row['COUNT(*)'];
+}
+
+
+///// Specific to rock //////////
+// Other restrictions
+// extracting the project folder and the year
+$temp=explode('/',$thedb);
+$project_folder=$temp[1];
+//echo $gexf;
+if (strpos($gexf,'2013')>0){
+	$year='2013';	
+	$year_filter=true;
+}elseif (strpos($gexf,'2012')>0){
+	$year='2012';
+	$year_filter=true;
+}else{
+	$year_filter=false;
+}
+
+// identification d'une année pour echoing
+if($project_folder=='nci'){
+	$year_filter=true;	
+	
 }
 
 // process of terms frequency in corpora for tidf
@@ -56,10 +76,13 @@ if($type=="semantic"){
 	$factor=10;
 }
 
+// identification d'une année pour echoing
+if($project_folder=='nci'){
+	$restriction.=" AND ISIpubdate='2013'";
+}
+
 $sql = 'SELECT count(*),'.$id.'
 FROM '.$table.' where (';
-
-
 	foreach($elems as $elem){
 		$sql.=' '.$column.'="'.$elem.'" OR ';
 	}
@@ -67,7 +90,7 @@ FROM '.$table.' where (';
 	$sql = substr($sql, 0, -3);
 	$sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
 
-	$sql.=')'.$restriction.'
+	$sql.=')
 GROUP BY '.$id.'
 ORDER BY count('.$id.') DESC
 LIMIT 1000';
@@ -103,26 +126,6 @@ foreach ($base->query($sql) as $row) {
 }
 
 
-///// Specific to rock //////////
-// Other restrictions
-// extracting the project folder and the year
-$temp=explode('/',$thedb);
-$project_folder=$temp[1];
-//echo $gexf;
-if (strpos($gexf,'2013')>0){
-	$year='2013';	
-	$year_filter=true;
-}elseif (strpos($gexf,'2012')>0){
-	$year='2012';
-	$year_filter=true;
-}else{
-	$year_filter=false;
-}
-
-// identification d'une année pour echoing
-if($project_folder=='nci'){
-	$year_filter=true;
-}
 
 arsort($wos_ids);
 $number_doc=count($wos_ids);
@@ -145,7 +148,7 @@ foreach ($wos_ids as $id => $score) {
 			}			
 		}elseif($project_folder=='nci'){
 			if ($year_filter){
-				if ($pubdate!='1994'){
+				if ($pubdate!='2013'){
 					$to_display=false;
 				}
 			}	
@@ -196,7 +199,6 @@ foreach ($wos_ids as $id => $score) {
 	}
 }
 $output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; #####
-$output .= "<br><br><center><a href='#'><img width='50px' onclick='selectionToMap();' title='See the world distribution!' src='".$twjs."img/world.png'></img></a></center>";
 
 
 function imagestar($score,$factor,$twjs) {
