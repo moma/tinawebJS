@@ -5,6 +5,8 @@ $terms_of_query=json_decode($_GET["query"]);
 
 include('parameters_details.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
+
+
 echo '
 <html>
         <head>
@@ -31,7 +33,7 @@ echo '
   echo '</ul>';
 
 echo '<div id="tabs-1">';
-$output = ""; // string sent to the javascript for display
+
 $id=$_GET["id"];
 //$elems = json_decode($query);
 	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;

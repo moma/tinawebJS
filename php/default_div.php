@@ -3,8 +3,11 @@
 $thedb = $graphdb;
 $gexf=$_GET["gexf"];
 // just for papers detail for ademe
-$isAdeme=$_SERVER["PHP_SELF"];
-//if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
+
+$temp=explode('/',$graphdb);
+$corpora=$temp[count($temp)-2];
+$corporadb = new PDO("sqlite:" .$mainpath.'data/'.$corpora.'/'.$corpora.'.sqlite'); //data base with complementary data
+
 
 $output = "<ul>"; // string sent to the javascript for display
 
@@ -43,18 +46,6 @@ if($project_folder=='nci'){
 	
 }
 
-// process of terms frequency in corpora for tidf
-$elems_freq=array();
-foreach ($elems as $key => $value) {
-	// we count the number of occ in the doc
-	$sql="SELECT count(*) FROM ISITerms Where data='".$value."' group by id";
-	$result = $base->query($sql);
-	foreach ($result as $row) {
-		$nb_doc = $row['count(*)'];	
-	}	
-	$elems_freq[$value]=$nb_doc;		
-	}
-
 $table = "";
 $column = "";
 $id="";
@@ -81,21 +72,21 @@ if($project_folder=='nci'){
 	$restriction.=" AND ISIpubdate='2013'";
 }
 
-$sql = 'SELECT count(*),'.$id.'
-FROM '.$table.' where (';
+$sql = 'SELECT sum(tfidf),id
+FROM tfidf where (';
 	foreach($elems as $elem){
-		$sql.=' '.$column.'="'.$elem.'" OR ';
+		$sql.=' term="'.$elem.'" OR ';
 	}
 #$querynotparsed=$sql;#####
 	$sql = substr($sql, 0, -3);
-	$sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
+	$sql = str_replace( ' & ', '" OR term="', $sql );
 
-	$sql.=')
-GROUP BY '.$id.'
-ORDER BY count('.$id.') DESC
+  $sql.=')'.//$restriction.
+'GROUP BY '.$id.'
+ORDER BY sum(tfidf) DESC
 LIMIT 1000';
 
-//echo $sql.'<br/>';
+//echo $sql;
 #$queryparsed=$sql;#####
 
 $wos_ids = array();
@@ -103,32 +94,20 @@ $sum=0;
 
 //echo $sql;//The final query!
 // array of all relevant documents with score
-foreach ($base->query($sql) as $row) {	
-	// on calcul le tfidf par document
-	// identifiant de l'article
-	$tfidf=0;
-	$doc_id=$row['id']; 
-	//echo $doc_id.' Doc ID<br/>';
-	//print_r($elems);
-	// pour tous les terms du document qui sont dans la query
-	foreach ($elems as $key => $value) {
-		// we count the number of occ in the doc
-		$sql2="SELECT count(*) from ISIterms where (id=".$doc_id." and data='".$value."') group by id";
-		//echo $sql2.'<br/>';
-		foreach ($base->query($sql2) as $row2) {			
-			//	echo $row2['count(*)'].'-'.$table_size.'-'.$elems_freq[$value].'<br/>';;
-			$tfidf+=log(1+$row2['count(*)'])*log($table_size/$elems_freq[$value]);
-		}
-	}
-	//$num_rows = $result->numRows();
-	$wos_ids[$row[$id]] = $tfidf;//$row["count(*)"];
-	$sum = $row["count(*)"] +$sum;
+$count=0;
+foreach ($corporadb ->query($sql) as $row) {	
+	//if ($count<4*$max_item_displayed){
+		$wos_ids[$row[$id]] = $row['sum(tfidf)'];//$row["count(*)"];
+		$sum = $row["count(*)"] +$sum;
+	//}else{
+	//	continue;
+	//}
 }
 
 
+//arsort($wos_ids);
 
-arsort($wos_ids);
-$number_doc=count($wos_ids);
+$number_doc=ceil(count($wos_ids)/3);
 $count=0;
 foreach ($wos_ids as $id => $score) {	
 	if ($count<$max_item_displayed){
@@ -155,7 +134,6 @@ foreach ($wos_ids as $id => $score) {
 		}
 
 		if ($to_display){
-
 			$count+=1;
 			$output.="<li title='".$score."'>";
 			$output.=imagestar($score,$factor,$twjs).' ';	
@@ -198,7 +176,7 @@ foreach ($wos_ids as $id => $score) {
 		continue;
 	}
 }
-$output .= "</ul>[".$max_item_displayed." top items over ".$number_doc.']'; #####
+$output .= "</ul>[".$count." top items]"; #####
 
 
 function imagestar($score,$factor,$twjs) {
