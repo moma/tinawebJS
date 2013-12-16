@@ -103,6 +103,7 @@ $sum=0;
 
 //echo $sql;//The final query!
 // array of all relevant documents with score
+//$before = microtime(true);
 foreach ($base->query($sql) as $row) {	
 	// on calcul le tfidf par document
 	// identifiant de l'article
@@ -114,16 +115,30 @@ foreach ($base->query($sql) as $row) {
 	foreach ($elems as $key => $value) {
 		// we count the number of occ in the doc
 		$sql2="SELECT count(*) from ISIterms where (id=".$doc_id." and data='".$value."') group by id";
-		//echo $sql2.'<br/>';
-		foreach ($base->query($sql2) as $row2) {			
-			//	echo $row2['count(*)'].'-'.$table_size.'-'.$elems_freq[$value].'<br/>';;
+                //echo $sql2."<br>";
+//                echo '-'.$table_size.'-'.$elems_freq[$value].'<br/>';;
+                
+                // ====== Check if returns != null ======
+                $cnt=0;
+                foreach ($base->query($sql2) as $row2) {
+                    $cnt+=1;
+                    if($cnt==1) break;
+                }
+                // ====== / Check if returns != null ======
+                
+                if($cnt>0) {
+                    foreach ($base->query($sql2) as $row2) {			
+			//	echo $row2['count(*)'].'-'.$table_size.'-'.$elems_freq[$value].'<br/>';
 			$tfidf+=log(1+$row2['count(*)'])*log($table_size/$elems_freq[$value]);
-		}
+                    }
+                } else break;
 	}
 	//$num_rows = $result->numRows();
 	$wos_ids[$row[$id]] = $tfidf;//$row["count(*)"];
 	$sum = $row["count(*)"] +$sum;
 }
+//$after = microtime(true);
+//echo ($after-$before) . " sec<br>";
 
 
 
