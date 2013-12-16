@@ -4,7 +4,7 @@ echo '<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>';
 //include('parameters_details.php');
 $db = new PDO("sqlite:graph.db");
 
-$database_name='nci.sqlite';
+$database_name='echoing.sqlite';
 $project_base = new PDO("sqlite:" .$database_name);
 
 // Table creation
@@ -40,7 +40,7 @@ foreach ($db->query($sql) as $doc) {
 	foreach ($db->query($sql2) as $term_data) {
 		$term=$term_data['data'];
 		$term_occ_in_doc=$term_data['count(*)'];
-		$terms_tfidf=$term_occ_in_doc*log($table_size/$terms_freq[$term]);
+		$terms_tfidf=log(1+$term_occ_in_doc)*log($table_size/$terms_freq[$term]);
 		$query='INSERT INTO tfidf  (id,term,tfidf) VALUES ('.$id.',"'.$term.'",'.$terms_tfidf.')';
 		$project_base->query($query);		
 	}

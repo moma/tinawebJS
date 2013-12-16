@@ -20,7 +20,11 @@ foreach($dbs as $db){
 //var_dump($dbs);
 
 $mainpath=dirname(dirname(getcwd()))."/"; // -> /var/www/ademe/data/pathtodatabase/and.db
+//echo $mainpath.'<br/>';
+//echo $graphdb.'<br/>';
+
 ////getDB($mainpath);//'homework-20750-1-homework-db.db';
+
 $max_item_displayed=6;
 
 /*
