@@ -1,6 +1,8 @@
 <?php
 
 $db= $_GET["db"];//I receive the specific database as string!
+$terms_of_query=json_decode($_GET["query"]);
+
 include('parameters_details.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
 echo '
@@ -25,7 +27,7 @@ echo '
     <div id="tabs">
   <ul>
     <li><a href="#tabs-1">Selected Document</a></li>
-    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.urlencode($_GET["type"]).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'">Full list</a></li>';    
+    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.urlencode($_GET["type"]).'&query='.urlencode($_GET["query"]).'">Full list</a></li>';    
   echo '</ul>';
 
 echo '<div id="tabs-1">';
@@ -57,20 +59,44 @@ $id=$_GET["id"];
   }
   natsort($terms);
   $terms=array_unique($terms); // liste des termes de l'article
+  $keywords='';
   foreach ($terms as $key => $value) {
-    $output.=$value.', ';
+    $keywords.=$value.', ';
   }
+
+  $output.=$keywords;
 
 	$sql = 'SELECT data FROM ISIABSTRACT WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
     $abs=$row['data'];
 
-    $abs=str_replace('ISSUES:'  ,'<br/><br/><b>ISSUES:</b>',$abs);
-    $abs=str_replace('IMPACT:'  ,'<br/><br/><b>IMPACT:</b>',$abs);
-    $abs=str_replace('NOVELTY:'  ,'<br/><br/><b>NOVELTY:</b>',$abs);
+    $abs=str_replace('ISSUES:'  ,'<br/><br/><b>Issues:</b>',$abs);
+    $abs=str_replace('INTENDED IMPACT:'  ,'<br/><br/><b>Intended impact:</b>',$abs);    
+    $abs=str_replace('IMPACT:'  ,'<br/><br/><b>Impact:</b>',$abs);
+    $abs=str_replace('NOVELTY:'  ,'<br/><br/><b>Novelty:</b>',$abs);
+    $abs=str_replace('BOLD INNOVATION:'  ,'<br/><br/><b>Bold innovation:</b>',$abs);
+    $abs=str_replace('SOCIAL PROBLEM:'  ,'<br/><br/><b>Social problem:</b>',$abs);
+
+    // solving encoding pb
+    $abs=str_replace('â€•', ' ', $abs);
+    $abs=str_replace('â€Ÿâ€Ÿ', ' ', $abs);
+    $abs=str_replace('â€žâ€Ÿ', ' ', $abs);
+    $abs=str_replace('_x000D_', ' ', $abs);
+    $abs=str_replace('â€¢', ' ', $abs);
+    $abs=str_replace('â€™', '\'', $abs);
+
 		$output.='<br/><p><b>Abstract : </b><i>'.$abs.' </i></p>';
 		$output.="<br>";		
 	}
+
+foreach ($terms_of_query as $key => $value) {
+  $output=str_ireplace($value,'<font color="green"><b> '.$value.'</b></font>',$output);
+}
+foreach (array_diff($terms,$terms_of_query) as $key => $value) {
+  $output=str_ireplace($value,'<font color="#800000"> '.$value.'</font>',$output);
+}
+
+
 
 echo $output.$find;
 echo '</div>';

@@ -2,21 +2,23 @@
 
 $db= $_GET["db"];//I receive the specific database as string!
 $query=$_GET["query"];
+$gexf=$_GET["gexf"];
+
 include('parameters_details.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
 
 echo '
 <html>
-        <head>
-  <meta charset="utf-8" />
-  <title>Document details</title>
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  
+<head>
+<meta charset="utf-8" />
+<title>Document details</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
 </head>
-          
-    <body>';
+
+<body>';
 
 echo '<div>';
 
@@ -28,12 +30,30 @@ $column = "";
 $id="";
 $twjs="tinawebJS/"; // submod path of TinaWebJS
 
+
+// nombre d'item dans les tables 
+$sql='SELECT COUNT(*) FROM ISIABSTRACT';
+foreach ($base->query($sql) as $row) {
+  $table_size=$row['COUNT(*)'];
+}
+
+// process of terms frequency in corpora for tidf
+$elems_freq=array();
+foreach ($elems as $key => $value) {
+    // we count the number of occ in the doc
+  $sql="SELECT count(*) FROM ISITerms Where data='".$value."' group by id";
+  $result = $base->query($sql);
+  foreach ($result as $row) {
+    $nb_doc = $row['count(*)']; 
+  } 
+  $elems_freq[$value]=$nb_doc;    
+}
 if($type=="social"){
   $table = "ISIAUTHOR";
   $column = "data";
   $id = "id";
   $restriction='';
-  $factor=1;// factor for normalisation of stars
+  $factor=3;// factor for normalisation of stars
 }
 
 if($type=="semantic"){
@@ -41,14 +61,14 @@ if($type=="semantic"){
   $column = "data";
   $id = "id";
   $restriction='';
-  $factor=3;
+  $factor=10;
 }
 
 $sql = 'SELECT count(*),'.$id.'
 FROM '.$table.' where (';
 
 // list of keywords
-$keywords='';
+  $keywords='';
 
   foreach($elems as $elem){
     $sql.=' '.$column.'="'.$elem.'" OR ';
@@ -72,57 +92,107 @@ $sum=0;
 //echo $sql;//The final query!
 // array of all relevant documents with score
 foreach ($base->query($sql) as $row) {  
-  // on pondère le score par le nombre de termes mentionnés par l'article
+  // on calcul le tfidf par document
+  // identifiant de l'article
+  $tfidf=0;
+  $doc_id=$row['id']; 
+  //echo $doc_id.' Doc ID<br/>';
+  //print_r($elems);
+  // pour tous les terms du document qui sont dans la query
+  foreach ($elems as $key => $value) {
+    // we count the number of occ in the doc
+    $sql2="SELECT count(*) from ISIterms where (id=".$doc_id." and data='".$value."') group by id";
+    //echo $sql2.'<br/>';
+    foreach ($base->query($sql2) as $row2) {      
+      //echo $row2['count(*)'].'-'.$table_size.'-'.$elems_freq[$value].'<br/>';
+      $tfidf+=log(1+$row2['count(*)'])  *log($table_size/$elems_freq[$value]);
+    }
+  }
   
   //$num_rows = $result->numRows();
-  $wos_ids[$row[$id]] = $row["count(*)"];
+  $wos_ids[$row[$id]] = $tfidf;//$row["count(*)"];
   $sum = $row["count(*)"] +$sum;
 }
 
-#$afterquery=json_encode($wos_ids);#####
+///// Specific to rock //////////
+// Other restrictions
+// extracting the project folder and the year
+$temp=explode('/',$db);
+$project_folder=$temp[1];
+//echo $gexf;
+if (strpos($gexf,'2013')>0){
+  $year='2013'; 
+  $year_filter=true;
+}elseif (strpos($gexf,'2012')>0){
+  $year='2012';
+  $year_filter=true;
+}else{
+  $year_filter=false;
+}
+// identification d'une année pour echoing
+if($project_folder=='nci'){
+  $year_filter=true;
+  $year='2013';
+}
 
 $number_doc=count($wos_ids);
 
-
-
-
+arsort($wos_ids);
 $output .= $number_doc.' items related to: '.$keywords.'<br/><br/>';
 $count=0;
 foreach ($wos_ids as $id => $score) {
   if ($count<1000){
-    $count+=1;
-    $output.="<li title='".$score."'>";
-    $output.=imagestar($score,$factor,$twjs).' '; 
-    $sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
-
-    foreach ($base->query($sql) as $row) {
-      $output.='<a href="default_doc_details.php?db='.urlencode($db).'&type='.urlencode($_GET["type"]).'&query='.urlencode($query).'&id='.$id.'">'.$row['data']." </a> ";
-
-                        
-                        //this should be the command:
-      //$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'  \')">'.$row['data']." </a> "; 
-                        
-                        //the old one:  
-      //$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'  \')">'.$row['data']." </a> ";   
-      $external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=20px src="img/gs.png"></a>'; 
-    //$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>'; 
-    }
-
-  // get the authors
-    $sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
-    foreach ($base->query($sql) as $row) {
-      $output.=strtoupper($row['data']).', ';
-    }
     $sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
     foreach ($base->query($sql) as $row) {
-      $output.='('.$row['data'].') ';
+      $pubdate=$row['data'];
     }
+    // to filter under some conditions
+    $to_display=true; 
+    if ($project_folder=='echoing'){
+      if ($year_filter){
+        if ($pubdate!=$year){
+          $to_display=false;
+        }
+      }     
+    }elseif($project_folder=='nci'){
+      if ($year_filter){
+        if ($pubdate!='2013'){
+          $to_display=false;
+        }
+      } 
+    }
+
+    if ($to_display){
+      $count+=1;
+      $output.="<li title='".$score."'>";
+      $output.=imagestar($score,$factor,$twjs).' '; 
+      $sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
+
+      foreach ($base->query($sql) as $row) {
+        $output.='<a href="default_doc_details.php?db='.urlencode($db).'&type='.urlencode($_GET["type"]).'&query='.urlencode($query).'&id='.$id.'">'.$row['data']." </a> ";
+
+
+                        //this should be the command:
+      //$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'  \')">'.$row['data']." </a> "; 
+
+                        //the old one:  
+      //$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'  \')">'.$row['data']." </a> ";   
+        $external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=20px src="img/gs.png"></a>'; 
+    //$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>'; 
+      }
+
+  // get the authors
+      $sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
+      foreach ($base->query($sql) as $row) {
+        $output.=strtoupper($row['data']).', ';
+      }
+
 
 
 
   //<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'
-
-    $output.=$external_link."</li><br>";
+      $output.='('.$pubdate.') '.$external_link."</li><br>";
+    }
   }else{
     continue;
   }
