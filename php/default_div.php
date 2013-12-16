@@ -94,18 +94,13 @@ $sum=0;
 
 //echo $sql;//The final query!
 // array of all relevant documents with score
+
 $count=0;
 foreach ($corporadb ->query($sql) as $row) {	
-	//if ($count<4*$max_item_displayed){
 		$wos_ids[$row[$id]] = $row['sum(tfidf)'];//$row["count(*)"];
 		$sum = $row["count(*)"] +$sum;
-	//}else{
-	//	continue;
-	//}
 }
 
-
-//arsort($wos_ids);
 
 $number_doc=ceil(count($wos_ids)/3);
 $count=0;
