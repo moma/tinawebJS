@@ -162,7 +162,31 @@ foreach ($wos_ids as $id => $score) {
 		continue;
 	}
 }
+
 $output .= "</ul>[".$count." top items]"; #####
+// for NCI we compare the impact and novelty score making the difference
+if ($project_folder=='nci'){
+	$diff=array();
+	foreach ($elems as $key => $term) {
+		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2011 AND ISIterms.data='".$term."') group by ISIterms.data";
+	
+		foreach ($base->query($sql) as $row) {
+			$nov=$row['count(*)'];
+		}
+		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2012 AND ISIterms.data='".$term."') group by ISIterms.data";
+		foreach ($base->query($sql) as  $row) {
+			$imp=$row['count(*)'];
+		}
+		$diff[$term]=($nov-$imp);
+		
+	}	
+	arsort($diff);
+	$res=array_keys($diff);
+	$output.='<br/><b>Top Novelties: </b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';
+	asort($diff);	
+	$res=array_keys($diff);	
+	$output.='<br/><b>Top Impact: </b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';	
+}
 
 
 function imagestar($score,$factor,$twjs) {
