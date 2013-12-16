@@ -25,7 +25,7 @@ foreach ($base->query($sql) as $row) {
 // Other restrictions
 // extracting the project folder and the year
 $temp=explode('/',$thedb);
-$project_folder=$temp[1];
+$project_folder=$temp[1];	
 //echo $gexf;
 if (strpos($gexf,'2013')>0){
 	$year='2013';	
@@ -46,7 +46,7 @@ if($project_folder=='nci'){
 // process of terms frequency in corpora for tidf
 $elems_freq=array();
 foreach ($elems as $key => $value) {
-		// we count the number of occ in the doc
+	// we count the number of occ in the doc
 	$sql="SELECT count(*) FROM ISITerms Where data='".$value."' group by id";
 	$result = $base->query($sql);
 	foreach ($result as $row) {

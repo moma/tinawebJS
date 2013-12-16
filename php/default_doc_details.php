@@ -90,8 +90,13 @@ $id=$_GET["id"];
 	}
 
 foreach ($terms_of_query as $key => $value) {
-  $output=str_replace($value,'<font color="green"><b> '.$value.'</b></font>',$output);
+  $output=str_ireplace($value,'<font color="green"><b> '.$value.'</b></font>',$output);
 }
+foreach (array_diff($terms,$terms_of_query) as $key => $value) {
+  $output=str_ireplace($value,'<font color="#800000"> '.$value.'</font>',$output);
+}
+
+
 
 echo $output.$find;
 echo '</div>';

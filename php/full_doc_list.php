@@ -2,6 +2,8 @@
 
 $db= $_GET["db"];//I receive the specific database as string!
 $query=$_GET["query"];
+$gexf=$_GET["gexf"];
+
 include('parameters_details.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
 
@@ -115,7 +117,7 @@ foreach ($base->query($sql) as $row) {
 ///// Specific to rock //////////
 // Other restrictions
 // extracting the project folder and the year
-$temp=explode('/',$thedb);
+$temp=explode('/',$db);
 $project_folder=$temp[1];
 //echo $gexf;
 if (strpos($gexf,'2013')>0){
@@ -130,6 +132,7 @@ if (strpos($gexf,'2013')>0){
 // identification d'une année pour echoing
 if($project_folder=='nci'){
   $year_filter=true;
+  $year='2013';
 }
 
 $number_doc=count($wos_ids);
@@ -141,7 +144,7 @@ foreach ($wos_ids as $id => $score) {
   if ($count<1000){
     $sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
     foreach ($base->query($sql) as $row) {
-      $pubdate='('.$row['data'].') ';
+      $pubdate=$row['data'];
     }
     // to filter under some conditions
     $to_display=true; 
@@ -153,7 +156,7 @@ foreach ($wos_ids as $id => $score) {
       }     
     }elseif($project_folder=='nci'){
       if ($year_filter){
-        if ($pubdate!='1994'){
+        if ($pubdate!='2013'){
           $to_display=false;
         }
       } 
@@ -188,7 +191,7 @@ foreach ($wos_ids as $id => $score) {
 
 
   //<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'
-      $output.=$pubdate.$external_link."</li><br>";
+      $output.='('.$pubdate.') '.$external_link."</li><br>";
     }
   }else{
     continue;
