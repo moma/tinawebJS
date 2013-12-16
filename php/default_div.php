@@ -6,6 +6,7 @@ $gexf=$_GET["gexf"];
 
 $temp=explode('/',$graphdb);
 $corpora=$temp[count($temp)-2];
+//echo $mainpath.'data/'.$corpora.'/'.$corpora.'.sqlite';
 $corporadb = new PDO("sqlite:" .$mainpath.'data/'.$corpora.'/'.$corpora.'.sqlite'); //data base with complementary data
 
 
@@ -69,38 +70,39 @@ if($type=="semantic"){
 
 // identification d'une année pour echoing
 if($project_folder=='nci'){
-	$restriction.=" AND ISIpubdate='2013'";
+	$restriction.="";
 }
 
-$sql = 'SELECT sum(tfidf),id
-FROM tfidf where (';
-	foreach($elems as $elem){
-		$sql.=' term="'.$elem.'" OR ';
-	}
+$sql = 'SELECT count(*),'.$id.'
+FROM '.$table.' where (';
+        foreach($elems as $elem){
+                $sql.=' '.$column.'="'.$elem.'" OR ';
+        }
 #$querynotparsed=$sql;#####
-	$sql = substr($sql, 0, -3);
-	$sql = str_replace( ' & ', '" OR term="', $sql );
+        $sql = substr($sql, 0, -3);
+        $sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
 
-  $sql.=')'.//$restriction.
-'GROUP BY '.$id.'
-ORDER BY sum(tfidf) DESC
+        $sql.=')'.$restriction.'
+GROUP BY '.$id.'
+ORDER BY count('.$id.') DESC
 LIMIT 1000';
 
-//echo $sql;
+
 #$queryparsed=$sql;#####
 
 $wos_ids = array();
 $sum=0;
 
-//echo $sql;//The final query!
+//The final query!
 // array of all relevant documents with score
 
-$count=0;
-foreach ($corporadb ->query($sql) as $row) {	
-		$wos_ids[$row[$id]] = $row['sum(tfidf)'];//$row["count(*)"];
-		$sum = $row["count(*)"] +$sum;
+foreach ($base->query($sql) as $row) {        
+        // on pondère le score par le nombre de termes mentionnés par l'article
+        
+        //$num_rows = $result->numRows();
+        $wos_ids[$row[$id]] = $row["count(*)"];
+        $sum = $row["count(*)"] +$sum;
 }
-
 
 $number_doc=ceil(count($wos_ids)/3);
 $count=0;
@@ -136,14 +138,7 @@ foreach ($wos_ids as $id => $score) {
 
 			foreach ($base->query($sql) as $row) {
 				$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
-
-                        //this should be the command:
-			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($datadb).'&id='.$id.'	\')">'.$row['data']." </a> ";	
-
-                        //the old one:	
-			//$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?id='.$id.'	\')">'.$row['data']." </a> ";		
 				$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
-		//$output.='<a href="JavaScript:newPopup(''php/doc_details.php?id='.$id.''')"> Link</a>';	
 			}
 
 	// get the authors
@@ -159,11 +154,7 @@ foreach ($wos_ids as $id => $score) {
 			}else {
 				$output.='(2013) ';
 			}
-
-
-
-	//<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'
-
+	
 			$output.=$external_link."</li><br>";			
 		}
 

@@ -1,9 +1,9 @@
 <?php
 include('parameters_details.php');
-
+  
 $db= $_GET["db"];//I receive the specific database as string!
 $query=$_GET["query"];
-$gexf='2013.gexf';//$_GET["gexf"];
+$gexf=$_GET["gexf"];
 
 $base = new PDO("sqlite:" .$mainpath.$db);
 
@@ -67,41 +67,36 @@ if($type=="semantic"){
   $factor=10;
 }
 
-// identification d'une année pour echoing
-if($project_folder=='nci'){
-  $restriction.=" AND ISIpubdate='2013'";
-}
 
-$sql = 'SELECT sum(tfidf),id
-FROM tfidf where (';
-  foreach($elems as $elem){
-    $sql.=' term="'.$elem.'" OR ';
-  }
+$sql = 'SELECT count(*),'.$id.'
+FROM '.$table.' where (';
+        foreach($elems as $elem){
+                $sql.=' '.$column.'="'.$elem.'" OR ';
+        }
 #$querynotparsed=$sql;#####
-  $sql = substr($sql, 0, -3);
-  $sql = str_replace( ' & ', '" OR term="', $sql );
+        $sql = substr($sql, 0, -3);
+        $sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
 
-  $sql.=')'.//$restriction.
-'GROUP BY '.$id.'
-ORDER BY sum(tfidf) DESC
+        $sql.=')'.$restriction.'
+GROUP BY '.$id.'
+ORDER BY count('.$id.') DESC
 LIMIT 1000';
 
-//echo $sql;
+
 #$queryparsed=$sql;#####
 
 $wos_ids = array();
 $sum=0;
 
-//echo $sql;//The final query!
+//The final query!
 // array of all relevant documents with score
-$count=0;
-foreach ($corporadb ->query($sql) as $row) {  
-  //if ($count<4*$max_item_displayed){
-    $wos_ids[$row[$id]] = $row['sum(tfidf)'];//$row["count(*)"];
-    $sum = $row["count(*)"] +$sum;
-  //}else{
-  //  continue;
-  //}
+
+foreach ($base->query($sql) as $row) {        
+        // on pondère le score par le nombre de termes mentionnés par l'article
+        
+        //$num_rows = $result->numRows();
+        $wos_ids[$row[$id]] = $row["count(*)"];
+        $sum = $row["count(*)"] +$sum;
 }
 
 
