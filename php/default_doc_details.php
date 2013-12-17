@@ -66,7 +66,7 @@ $id=$_GET["id"];
     $keywords.=$value.', ';
   }
 
-  $output.=$keywords;
+  $output.='<p align="justify">'.$keywords.'</p>';
 
 	$sql = 'SELECT data FROM ISIABSTRACT WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
@@ -87,7 +87,7 @@ $id=$_GET["id"];
     $abs=str_replace('â€¢', ' ', $abs);
     $abs=str_replace('â€™', '\'', $abs);
 
-		$output.='<br/><p><b>Abstract : </b><i>'.$abs.' </i></p>';
+		$output.='<br/><p align="justify"><b>Abstract : </b><i>'.$abs.' </i></p>';
 		$output.="<br>";		
 	}
 

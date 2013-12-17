@@ -163,8 +163,10 @@ foreach ($wos_ids as $id => $score) {
 	}
 }
 
-$output .= "</ul>[".$count." top items]"; #####
+$output .= "</ul>"; #####
+
 // for NCI we compare the impact and novelty score making the difference
+$news='';//new terms
 if ($project_folder=='nci'){
 	$diff=array();
 	foreach ($elems as $key => $term) {
@@ -182,10 +184,10 @@ if ($project_folder=='nci'){
 	}	
 	arsort($diff);
 	$res=array_keys($diff);
-	$output.='<br/><b>Top Novelties: </b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';
+	$news.='<br/><b><font color="#FF0066">Top 3 Novelty related terms </font></b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';
 	asort($diff);	
 	$res=array_keys($diff);	
-	$output.='<br/><b>Top Impact: </b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';	
+	$news.='<br/><b><font color="#CF5300">Top 3 Impact related terms: </font></b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';	
 }
 
 
@@ -203,6 +205,6 @@ function imagestar($score,$factor,$twjs) {
 	return $star_image;
 }
 
-echo $output;
+echo $news.'<br/><b><font color="#0000FF"> Top '.$count.' projects:</font></b>'.$output;
 //pt - 301 ; 15.30
 ?>
