@@ -4,6 +4,7 @@ $db= $_GET["db"];//I receive the specific database as string!
 $terms_of_query=json_decode($_GET["query"]);
 
 include('parameters_details.php');
+include('../../geomap/php/countries_iso3166.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
 
 
@@ -44,12 +45,23 @@ $id=$_GET["id"];
   // get the authors
   $sql = 'SELECT data FROM ISIAUTHOR WHERE id='.$id;
   foreach ($base->query($sql) as $row) {
-    $output.=strtoupper($row['data']).', ';
+    $output.=strtoupper($row['data']).' ';
   }
+
+
+
   // get the date
   $sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
   foreach ($base->query($sql) as $row) {
-    $output.='('.$row['data'].')<br/> ';
+    $output.='('.$row['data'].') ';
+  }
+
+// get the country
+  $sql = 'SELECT data FROM ISIkeyword WHERE id='.$id;
+  foreach ($base->query($sql) as $row) {
+    $country=$CC[strtoupper($row['data'])];
+  
+    $output.=strtoupper($country).'<br/>   ';
   }
 
   // get the date
@@ -66,7 +78,24 @@ $id=$_GET["id"];
     $keywords.=$value.', ';
   }
 
+  foreach ($terms_of_query as $key => $value) {
+      $keywords=str_replace($value,'<font color="green"><b> '.$value.'</b></font>',$keywords);
+    }
+    foreach (array_diff($terms,$terms_of_query) as $key => $value) {
+      $keywords=str_ireplace($value,'<font color="#800000"> '.$value.'</font>',$keywords);
+    }
+
   $output.='<p align="justify">'.$keywords.'</p>';
+
+
+  // get the website
+  $sql = 'SELECT data FROM ISISO WHERE id='.$id;
+  foreach ($base->query($sql) as $row) {
+    $www=$row['data'];
+    str_replace('http://', '', $www);
+
+    $output.='<b>Website: </b><a href="http://'.$www.'" target=blank>'.$row['data'].'</a> '.'<br/> ';
+  }
 
 	$sql = 'SELECT data FROM ISIABSTRACT WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
@@ -87,16 +116,18 @@ $id=$_GET["id"];
     $abs=str_replace('â€¢', ' ', $abs);
     $abs=str_replace('â€™', '\'', $abs);
 
+    foreach ($terms_of_query as $key => $value) {
+      $abs=str_ireplace($value,'<font color="green"><b> '.$value.'</b></font>',$abs);
+    }
+    foreach (array_diff($terms,$terms_of_query) as $key => $value) {
+      $abs=str_ireplace($value,'<font color="#800000"> '.$value.'</font>',$abs);
+    }
+
 		$output.='<br/><p align="justify"><b>Abstract : </b><i>'.$abs.' </i></p>';
 		$output.="<br>";		
 	}
 
-foreach ($terms_of_query as $key => $value) {
-  $output=str_ireplace($value,'<font color="green"><b> '.$value.'</b></font>',$output);
-}
-foreach (array_diff($terms,$terms_of_query) as $key => $value) {
-  $output=str_ireplace($value,'<font color="#800000"> '.$value.'</font>',$output);
-}
+
 
 
 
