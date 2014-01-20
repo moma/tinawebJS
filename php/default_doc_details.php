@@ -101,13 +101,6 @@ $id=$_GET["id"];
 	foreach ($base->query($sql) as $row) {
     $abs=$row['data'];
 
-    $abs=str_replace('ISSUES:'  ,'<br/><br/><b>Issues:</b>',$abs);
-    $abs=str_replace('INTENDED IMPACT:'  ,'<br/><br/><b>Intended impact:</b>',$abs);    
-    $abs=str_replace('IMPACT:'  ,'<br/><br/><b>Impact:</b>',$abs);
-    $abs=str_replace('NOVELTY:'  ,'<br/><br/><b>Novelty:</b>',$abs);
-    $abs=str_replace('BOLD INNOVATION:'  ,'<br/><br/><b>Bold innovation:</b>',$abs);
-    $abs=str_replace('SOCIAL PROBLEM:'  ,'<br/><br/><b>Social problem:</b>',$abs);
-
     // solving encoding pb
     $abs=str_replace('â€•', ' ', $abs);
     $abs=str_replace('â€Ÿâ€Ÿ', ' ', $abs);

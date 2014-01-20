@@ -30,22 +30,7 @@ foreach ($base->query($sql) as $row) {
 // extracting the project folder and the year
 $temp=explode('/',$thedb);
 $project_folder=$temp[1];	
-//echo $gexf;
-if (strpos($gexf,'2013')>0){
-	$year='2013';	
-	$year_filter=true;
-}elseif (strpos($gexf,'2012')>0){
-	$year='2012';
-	$year_filter=true;
-}else{
-	$year_filter=false;
-}
 
-// identification d'une année pour echoing
-if($project_folder=='nci'){
-	$year_filter=true;	
-	
-}
 
 $table = "";
 $column = "";
@@ -116,19 +101,7 @@ foreach ($wos_ids as $id => $score) {
 
 		// to filter under some conditions
 		$to_display=true; 
-		if ($project_folder=='echoing'){
-			if ($year_filter){
-				if ($pubdate!=$year){
-					$to_display=false;
-				}
-			}			
-		}elseif($project_folder=='nci'){
-			if ($year_filter){
-				if ($pubdate!='2013'){
-					$to_display=false;
-				}
-			}	
-		}
+	
 
 		if ($to_display){
 			$count+=1;
