@@ -115,7 +115,7 @@ function bringTheNoise(pathfile,type){
     $("#availableView").hide();  
     /*======= Show some labels at the beginning =======*/
     minIn=50,
-    maxIn=0,
+        maxIn=0,
     minOut=50,
     maxOut=0;        
     partialGraph.iterNodes(function(n){
@@ -271,7 +271,7 @@ function bringTheNoise(pathfile,type){
     });
     
     
-    $("#searchinput").keyup(function (e) {
+        $("#searchinput").keyup(function (e) {
         if (e.keyCode == 13 && $("input#searchinput").data('is_open') !== true) {
             pr("search KEY UP");
             var s = $("#searchinput").val();
