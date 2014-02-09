@@ -1,5 +1,6 @@
 <?php
 include('parameters_details.php');
+include('../../geomap/php/countries_iso3166.php');
   
 $db= $_GET["db"];//I receive the specific database as string!
 $query=$_GET["query"];
@@ -160,6 +161,13 @@ foreach ($wos_ids as $id => $score) {
         $output.='(2013) ';
       }
 
+// get the country
+  $sql = 'SELECT data FROM ISIkeyword WHERE id='.$id;
+  foreach ($base->query($sql) as $row) {
+    $country=$CC[strtoupper($row['data'])];
+  
+    $output.=strtoupper($country).'  ';
+  }
 
 
   //<a href="JavaScript:newPopup('http://www.quackit.com/html/html_help.cfm');">Open a popup window</a>'

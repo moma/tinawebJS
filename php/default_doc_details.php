@@ -48,7 +48,11 @@ $id=$_GET["id"];
     $output.=strtoupper($row['data']).' ';
   }
 
-
+  // get the company
+  $sql = 'SELECT data FROM ISIC1_1 WHERE id='.$id;
+  foreach ($base->query($sql) as $row) {
+    $output.=' - '.substr($row['data'],3,strlen($row['data'])).' ';
+  }
 
   // get the date
   $sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;

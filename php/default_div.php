@@ -71,8 +71,9 @@ if($type=="semantic"){
 // identification d'une année pour echoing
 if($project_folder=='nci'){
 	$restriction.="";
-}
+}		
 
+//////////
 $sql = 'SELECT count(*),'.$id.'
 FROM '.$table.' where (';
         foreach($elems as $elem){
@@ -104,7 +105,42 @@ foreach ($base->query($sql) as $row) {
         $sum = $row["count(*)"] +$sum;
 }
 
-$number_doc=ceil(count($wos_ids)/3);
+// /// nombre de document associés $related
+$total_count=0;
+$count_max=500;
+foreach ($wos_ids as $id => $score) {	
+		if ($total_count<=$count_max){
+					$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
+		foreach ($base->query($sql) as $row) {
+			$pubdate=$row['data'];
+		}
+
+		// to filter under some conditions
+		if ($project_folder=='echoing'){
+			if ($year_filter){
+				if ($pubdate==$year){
+					$total_count+=1;
+				}
+			}			
+		}elseif($project_folder=='nci'){
+			if ($year_filter){
+				if ($pubdate=='2013'){
+					$total_count+=1;
+				}
+			}	
+		}
+
+		}
+}
+
+if ($total_count<$count_max){
+	$related .= $total_count;
+}else{
+	$related .= ">".$count_max;
+}
+////////////
+
+
 $count=0;
 foreach ($wos_ids as $id => $score) {	
 	if ($count<$max_item_displayed){
@@ -165,8 +201,10 @@ foreach ($wos_ids as $id => $score) {
 
 $output .= "</ul>"; #####
 
-// for NCI we compare the impact and novelty score making the difference
+
+// for NCI we compare the impact and novelty score making the difference if there are more than 4 terms selected
 $news='';//new terms
+if(count($elems)>3){
 if ($project_folder=='nci'){
 	$diff=array();
 	foreach ($elems as $key => $term) {
@@ -188,7 +226,10 @@ if ($project_folder=='nci'){
 	asort($diff);	
 	$res=array_keys($diff);	
 	$news.='<br/><b><font color="#CF5300">Top 3 Impact related terms: </font></b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';	
+}	
 }
+
+
 
 
 function imagestar($score,$factor,$twjs) {
@@ -205,6 +246,6 @@ function imagestar($score,$factor,$twjs) {
 	return $star_image;
 }
 
-echo $news.'<br/><b><font color="#0000FF"> Top '.$count.' projects:</font></b>'.$output;
+echo $news.'<br/><b><font color="#0000FF"> Top '.$count.' over '.$related.' related projets:</font></b>'.$output;
 //pt - 301 ; 15.30
 ?>
