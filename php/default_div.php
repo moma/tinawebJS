@@ -109,7 +109,7 @@ $count_max=500;
 
 foreach ($wos_ids as $id => $score) {	
 		if ($total_count<=$count_max){
-					$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
+		$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
 		foreach ($base->query($sql) as $row) {
 			$pubdate=$row['data'];
 		}
@@ -139,6 +139,7 @@ if ($total_count<$count_max){
 }
 ////////////
 
+$all_terms_from_selected_projects=array();// list of terms for the top 6 project selected
 
 $count=0;
 foreach ($wos_ids as $id => $score) {	
@@ -190,7 +191,13 @@ foreach ($wos_ids as $id => $score) {
 				$output.='(2013) ';
 			}
 	
-			$output.=$external_link."</li><br>";			
+			$output.=$external_link."</li><br>";	
+
+			//
+			$sql = 'SELECT data FROM ISIterms WHERE id='.$id;
+			foreach ($base->query($sql) as $row) {
+				$all_terms_from_selected_projects[]=$row['data'];
+			}		
 		}
 
 	}else{
@@ -203,6 +210,8 @@ $output .= "</ul>"; #####
 
 // for NCI we compare the impact and novelty score making the difference if there are more than 4 terms selected
 $news='';//new terms
+$elems=array_unique($all_terms_from_selected_projects); 
+
 if(count($elems)>3){
 if ($project_folder=='nci'){
 	$diff=array();
