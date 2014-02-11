@@ -225,15 +225,46 @@ if ($project_folder=='nci'){
 		foreach ($base->query($sql) as  $row) {
 			$imp=$row['count(*)'];
 		}
+
 		$diff[$term]=info($nov,$imp); //positive si c'est un term novelty, negatif si c'est un terme impact.
-		
+		//echo $term.'-nov: '.$nov.'- imp:'.$imp.'-info'.$diff[$term].'<br/>';
 	}	
+
 	arsort($diff);
+	//print_r($diff);
 	$res=array_keys($diff);
-	$news.='<br/><b><font color="#FF0066">Top 3 Novelty related terms </font></b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';
+	$nov_string='';
+	for ($i=0;$i<3;$i++){
+
+		// on récupère le titre du document qui a le plus for impact
+		$sql="SELECT ISIterms.id,ISITITLE.data,count(*) from ISIterms,ISIpubdate,ISITITLE where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISITITLE.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";
+		foreach ($base->query($sql) as $row){
+			$sql2='SELECT ISIpubdate.id,ISITITLE.data from ISIpubdate,ISITITLE where ISITITLE.data="'.$row['data'].'" AND  ISIpubdate.id=ISITITLE.id AND ISIpubdate.data="2013"  limit 1';
+			foreach ($base->query($sql2) as $row2){
+				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+			}		
+		}
+	}
+
+	$news.='<br/><b><font color="#FF0066">Top 3 Novelty related terms </font></b>'.$nov_string.'<br/>';
 	asort($diff);	
 	$res=array_keys($diff);	
-	$news.='<br/><b><font color="#CF5300">Top 3 Impact related terms: </font></b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';	
+	$res_string='';
+	for ($i=0;$i<3;$i++){
+
+		// on récupère les titres du document qui a le plus for impact
+		$sql="SELECT ISIterms.id,ISITITLE.data,count(*) from ISIterms,ISIpubdate,ISITITLE where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISITITLE.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";
+
+		//on récupère les id associés. Attention, bug en cas de titres multiples genre 'executive director'
+		foreach ($base->query($sql) as $row){
+			$sql2='SELECT ISIpubdate.id,ISITITLE.data from ISIpubdate,ISITITLE where ISITITLE.data="'.$row['data'].'" AND  ISIpubdate.id=ISITITLE.id AND ISIpubdate.data="2013"  limit 1';
+			//echo $sql2;
+			foreach ($base->query($sql2) as $row2){
+				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+			}		
+		}
+	}
+	$news.='<br/><b><font color="#CF5300">Top 3 Impact related terms: </font></b>'.$res_string.'<br/>';	
 }	
 }
 // display the most occuring terms when only one is selected.
@@ -278,10 +309,15 @@ if ($project_folder=='nci'){
    }
 
  function info($novelty, $impact) {// pour un terme donné, calcule l'information associée à l'observation de $novelty occurrences $impact occurrences
- $probabilite_obs=binomial_coeff($novelty+$impact, $novelty)/pow(2,($novelty+$impact)); // probabilité d'observer cette distribution du termes si indépendance des occurrences
- $info=-$probabilite_obs*log($probabilite_obs);
- return ($novelty-$impact)/abs($novelty-$impact)*$info;//positive si c'est un term novelty, negatif si c'est un terme impact.
-
+ if ($novelty=$impact){
+ 	return 0;
+ }else{
+ 	$probabilite_obs=binomial_coeff($novelty+$impact, $novelty)/pow(2,($novelty+$impact)); // probabilité d'observer cette distribution du termes si indépendance des occurrences
+ 	$info=-$probabilite_obs*log($probabilite_obs);
+ 	//echo $info.'<br/>';
+	 return ($novelty-$impact)/abs($novelty-$impact)*$info;//positive si c'est un term novelty, negatif si c'est un terme impact.
+}
+ 
  }
 
 
@@ -299,6 +335,6 @@ function imagestar($score,$factor,$twjs) {
 	return $star_image;
 }
 
-echo $news.'<br/><b><font color="#0000FF"> Top '.$count.' over '.$related.' related projets:</font></b>'.$output;
+echo $news.'<br/><b><font color="#0000FF"> Top '.$count.'/'.$related.' related projets:</font></b>'.$output;
 //pt - 301 ; 15.30
 ?>
