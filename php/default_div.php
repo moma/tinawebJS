@@ -87,8 +87,6 @@ FROM '.$table.' where (';
 GROUP BY '.$id.'
 ORDER BY count('.$id.') DESC
 LIMIT 1000';
-
-
 #$queryparsed=$sql;#####
 
 $wos_ids = array();
@@ -107,7 +105,8 @@ foreach ($base->query($sql) as $row) {
 
 // /// nombre de document associés $related
 $total_count=0;
-$count_max=500;
+$count_max=500;	
+
 foreach ($wos_ids as $id => $score) {	
 		if ($total_count<=$count_max){
 					$sql = 'SELECT data FROM ISIpubdate WHERE id='.$id;
@@ -217,7 +216,7 @@ if ($project_folder=='nci'){
 		foreach ($base->query($sql) as  $row) {
 			$imp=$row['count(*)'];
 		}
-		$diff[$term]=($nov-$imp);
+		$diff[$term]=info($nov,$imp); //positive si c'est un term novelty, negatif si c'est un terme impact.
 		
 	}	
 	arsort($diff);
@@ -228,8 +227,53 @@ if ($project_folder=='nci'){
 	$news.='<br/><b><font color="#CF5300">Top 3 Impact related terms: </font></b>'.$res[0].', '.$res[1].', '.$res[2].'<br/>';	
 }	
 }
+// display the most occuring terms when only one is selected.
+//elseif (count($elems)==1) {// on affiche les voisins
+//	$terms_array=array();
+//	$id_sql='SELECT ISIterms.id FROM ISIterms where ISIterms.data="'.$elems[0].'" group by id';
+//	foreach ($base->query($id_sql) as $row_id) {			
+//			$sql2='SELECT ISIterms.data FROM ISIterms where ISIterms.id='.$row_id['id'];
+//			foreach ($base->query($sql2) as $row_terms) {				
+//				if ($terms_array[$row_terms['data']]>0){
+//					$terms_array[$row_terms['data']]=$terms_array[$row_terms['data']]+1;	
+//				}else{
+//					$terms_array[$row_terms['data']]=1;		
+//				}				
+//			}			
+//		}
+//		natsort($terms_array);			
+//		$terms_list=array_keys(array_slice($terms_array,-11,-1));
+//		foreach ($terms_list as $first_term) {
+//			$related_terms.=$first_term.', ';
+//		}															
+//	$news.='<br/><b><font color="#CF5300">Related terms: </font></b>'.$related_terms.'<br/>';
+//}
 
+   // calculate binomial coefficient
+ function binomial_coeff($n, $k) {
 
+      $j = $res = 1;
+
+      if($k < 0 || $k > $n)
+         return 0;
+      if(($n - $k) < $k)
+         $k = $n - $k;
+
+      while($j <= $k) {
+         $res *= $n--;
+         $res /= $j++;
+      }
+
+      return $res;
+
+   }
+
+ function info($novelty, $impact) {// pour un terme donné, calcule l'information associée à l'observation de $novelty occurrences $impact occurrences
+ $probabilite_obs=binomial_coeff($novelty+$impact, $novelty)/pow(2,($novelty+$impact)); // probabilité d'observer cette distribution du termes si indépendance des occurrences
+ $info=-$probabilite_obs*log($probabilite_obs);
+ return ($novelty-$impact)/abs($novelty-$impact)*$info;//positive si c'est un term novelty, negatif si c'est un terme impact.
+
+ }
 
 
 function imagestar($score,$factor,$twjs) {
