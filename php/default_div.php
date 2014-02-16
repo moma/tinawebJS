@@ -8,7 +8,7 @@ $temp=explode('/',$graphdb);
 $corpora=$temp[count($temp)-2];
 //echo $mainpath.'data/'.$corpora.'/'.$corpora.'.sqlite';
 $corporadb = new PDO("sqlite:" .$mainpath.'data/'.$corpora.'/'.$corpora.'.sqlite'); //data base with complementary data
-
+$corporadb_name='data/'.$corpora.'/'.$corpora.'.sqlite'; // chemin vers la base de données complémentaire
 
 $output = "<ul>"; // string sent to the javascript for display
 
@@ -208,41 +208,40 @@ foreach ($wos_ids as $id => $score) {
 $output .= "</ul>"; #####
 
 
-// for NCI we compare the impact and novelty score making the difference if there are more than 4 terms selected
-$news='';//new terms
-$elems=array_unique($all_terms_from_selected_projects); 
-
-if(count($elems)>3){
 if ($project_folder=='nci'){
+	// for NCI we compare the impact and novelty score making the difference if there are more than 4 terms selected
+	$news='';//new terms
+	$elems=array_unique($all_terms_from_selected_projects); 
+	if(count($elems)>3){
 	$diff=array();
 	foreach ($elems as $key => $term) {
 		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2011 AND ISIterms.data='".$term."') group by ISIterms.data";
-	
-		foreach ($base->query($sql) as $row) {
+		
+		foreach ($corporadb->query($sql) as $row) {
 			$nov=$row['count(*)'];
 		}
 		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2012 AND ISIterms.data='".$term."') group by ISIterms.data";
-		foreach ($base->query($sql) as  $row) {
+		foreach ($corporadb->query($sql) as  $row) {
 			$imp=$row['count(*)'];
 		}
-
 		$diff[$term]=info($nov,$imp); //positive si c'est un term novelty, negatif si c'est un terme impact.
 		//echo $term.'-nov: '.$nov.'- imp:'.$imp.'-info'.$diff[$term].'<br/>';
 	}	
 
 	arsort($diff);
-	//print_r($diff);
 	$res=array_keys($diff);
 	$nov_string='';
 	for ($i=0;$i<3;$i++){
 
-		// on récupère le titre du document qui a le plus for impact
-		$sql="SELECT ISIterms.id,ISITITLE.data,count(*) from ISIterms,ISIpubdate,ISITITLE where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISITITLE.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";
-		foreach ($base->query($sql) as $row){
-			$sql2='SELECT ISIpubdate.id,ISITITLE.data from ISIpubdate,ISITITLE where ISITITLE.data="'.$row['data'].'" AND  ISIpubdate.id=ISITITLE.id AND ISIpubdate.data="2013"  limit 1';
-			foreach ($base->query($sql2) as $row2){
-				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+		// on récupère les titres du document qui a le plus for impact
+		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
 
+		//on récupère les id associés.
+		foreach ($corporadb->query($sql) as $row){
+			$sql2='SELECT ISIpubdate.id,ISIC1_1.data from ISIpubdate,ISIC1_1 where ISIC1_1.data="'.$row['data'].'" AND  ISIpubdate.id=ISIC1_1.id AND ISIpubdate.data="2013"  limit 1';
+			//echo $sql2;
+			foreach ($corporadb->query($sql2) as $row2){
+				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($corporadb_name).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
 			}		
 		}
 	}
@@ -254,14 +253,14 @@ if ($project_folder=='nci'){
 	for ($i=0;$i<3;$i++){
 
 		// on récupère les titres du document qui a le plus for impact
-		$sql="SELECT ISIterms.id,ISITITLE.data,count(*) from ISIterms,ISIpubdate,ISITITLE where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISITITLE.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";
+		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
 
-		//on récupère les id associés. Attention, bug en cas de titres multiples genre 'executive director'
-		foreach ($base->query($sql) as $row){
-			$sql2='SELECT ISIpubdate.id,ISITITLE.data from ISIpubdate,ISITITLE where ISITITLE.data="'.$row['data'].'" AND  ISIpubdate.id=ISITITLE.id AND ISIpubdate.data="2013"  limit 1';
+		//on récupère les id associés.
+		foreach ($corporadb->query($sql) as $row){
+			$sql2='SELECT ISIpubdate.id,ISIC1_1.data from ISIpubdate,ISIC1_1 where ISIC1_1.data="'.$row['data'].'" AND  ISIpubdate.id=ISIC1_1.id AND ISIpubdate.data="2013"  limit 1';
 			//echo $sql2;
-			foreach ($base->query($sql2) as $row2){
-				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+			foreach ($corporadb->query($sql2) as $row2){
+				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($corporadb_name).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
 			}		
 		}
 	}
@@ -310,7 +309,7 @@ if ($project_folder=='nci'){
    }
 
  function info($novelty, $impact) {// pour un terme donné, calcule l'information associée à l'observation de $novelty occurrences $impact occurrences
- if ($novelty=$impact){
+ if ($novelty==$impact){
  	return 0;
  }else{
  	$probabilite_obs=binomial_coeff($novelty+$impact, $novelty)/pow(2,($novelty+$impact)); // probabilité d'observer cette distribution du termes si indépendance des occurrences
