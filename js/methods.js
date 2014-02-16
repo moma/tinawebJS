@@ -359,7 +359,7 @@ function updateLeftPanel(){
     names+='<div id="selectionsBox">';
     names += '<h4>';
     for(var i in selections){
-        if(counter==4){
+        if(counter==9){
             names += '<h4>[...]</h4>';
             break;
         }
@@ -472,7 +472,7 @@ function updateLeftPanel(){
             names += '<h4>';
             for(var i in selections){
                 if(Nodes[i].type==catSem){
-                    if(counter==4){
+                    if(counter==9){
                         names += '<h4>[...]</h4>';
                         break;
                     }
@@ -534,7 +534,7 @@ function updateLeftPanel(){
             names += '<h4>';
             for(var i in selections){
                 if(Nodes[i].type==catSoc){
-                    if(counter==4){
+                    if(counter==9){
                         names += '<h4>[...]</h4>';
                         break;
                     }

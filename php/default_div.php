@@ -241,7 +241,8 @@ if ($project_folder=='nci'){
 		foreach ($base->query($sql) as $row){
 			$sql2='SELECT ISIpubdate.id,ISITITLE.data from ISIpubdate,ISITITLE where ISITITLE.data="'.$row['data'].'" AND  ISIpubdate.id=ISITITLE.id AND ISIpubdate.data="2013"  limit 1';
 			foreach ($base->query($sql2) as $row2){
-				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+
 			}		
 		}
 	}
@@ -260,7 +261,7 @@ if ($project_folder=='nci'){
 			$sql2='SELECT ISIpubdate.id,ISITITLE.data from ISIpubdate,ISITITLE where ISITITLE.data="'.$row['data'].'" AND  ISIpubdate.id=ISITITLE.id AND ISIpubdate.data="2013"  limit 1';
 			//echo $sql2;
 			foreach ($base->query($sql2) as $row2){
-				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
 			}		
 		}
 	}
