@@ -44,6 +44,7 @@ if (strpos($gexf,'2013')>0){
 // identification d'une année pour echoing
 if($project_folder=='nci'){
 	$year_filter=true;	
+	$top_displayed=5;// nombre de novelty and impact displayed
 	
 }
 
@@ -216,25 +217,28 @@ if ($project_folder=='nci'){
 	$diff=array();
 	foreach ($elems as $key => $term) {
 		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2011 AND ISIterms.data='".$term."') group by ISIterms.data";
-		
+		$nov=0;
 		foreach ($corporadb->query($sql) as $row) {
 			$nov=$row['count(*)'];
 		}
 		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2012 AND ISIterms.data='".$term."') group by ISIterms.data";
+		$imp=0;
 		foreach ($corporadb->query($sql) as  $row) {
 			$imp=$row['count(*)'];
 		}
 		$diff[$term]=info($nov,$imp); //positive si c'est un term novelty, negatif si c'est un terme impact.
-		//echo $term.'-nov: '.$nov.'- imp:'.$imp.'-info'.$diff[$term].'<br/>';
+		//echo $term.'-nov: '.$nov.'- imp:'.$imp.'<br/>';//'-info'.$diff[$term].
 	}	
 
 	arsort($diff);
 	$res=array_keys($diff);
+	//echo implode(', ', $res);
 	$nov_string='';
-	for ($i=0;$i<3;$i++){
+	for ($i=0;$i<$top_displayed;$i++){
 
 		// on récupère les titres du document qui a le plus for impact
 		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
+		//echo $sql;
 
 		//on récupère les id associés.
 		foreach ($corporadb->query($sql) as $row){
@@ -246,14 +250,14 @@ if ($project_folder=='nci'){
 		}
 	}
 
-	$news.='<br/><b><font color="#FF0066">Top 3 Novelty related terms </font></b>'.$nov_string.'<br/>';
+	$news.='<br/><b><font color="#FF0066">Top '.$top_displayed.' Novelty related terms </font></b>'.$nov_string.'<br/>';
 	asort($diff);	
 	$res=array_keys($diff);	
 	$res_string='';
-	for ($i=0;$i<3;$i++){
+	for ($i=0;$i<$top_displayed;$i++){
 
 		// on récupère les titres du document qui a le plus for impact
-		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
+		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2012' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
 
 		//on récupère les id associés.
 		foreach ($corporadb->query($sql) as $row){
@@ -264,7 +268,7 @@ if ($project_folder=='nci'){
 			}		
 		}
 	}
-	$news.='<br/><b><font color="#CF5300">Top 3 Impact related terms: </font></b>'.$res_string.'<br/>';	
+	$news.='<br/><b><font color="#CF5300">Top '.$top_displayed.' Impact related terms: </font></b>'.$res_string.'<br/>';	
 }	
 }
 // display the most occuring terms when only one is selected.
@@ -312,10 +316,9 @@ if ($project_folder=='nci'){
  if ($novelty==$impact){
  	return 0;
  }else{
- 	$probabilite_obs=binomial_coeff($novelty+$impact, $novelty)/pow(2,($novelty+$impact)); // probabilité d'observer cette distribution du termes si indépendance des occurrences
- 	$info=-$probabilite_obs*log($probabilite_obs);
+ 	$info=($novelty/($novelty+$impact)-0.5)*min(log(1+($novelty+$impact)/2),1.5);
  	//echo $info.'<br/>';
-	 return ($novelty-$impact)/abs($novelty-$impact)*$info;//positive si c'est un term novelty, negatif si c'est un terme impact.
+	 return $info;//positive si c'est un term novelty, negatif si c'est un terme impact.
 }
  
  }
