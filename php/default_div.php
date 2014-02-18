@@ -4,7 +4,7 @@
 $thedb = $graphdb;
 // just for papers detail for ademe
 $isAdeme=$_SERVER["PHP_SELF"];
-//if (strpos($isAdeme, 'ademe') !== false) $thedb = $datadb;
+if (strpos($isAdeme, 'ademe') !== false) $isAdeme=true;
 
 $output = "<ul>"; // string sent to the javascript for display
 
@@ -23,7 +23,7 @@ $id="";
 $twjs="tinawebJS/"; // submod path of TinaWebJS
 
 if($type=="social"){
-	$table = "ISIAUTHOR";
+	$table = ($isAdeme)? "ISISO" : "ISIAUTHOR";
 	$column = "data";
 	$id = "id";
 	$restriction='';
@@ -31,7 +31,7 @@ if($type=="social"){
 }
 
 if($type=="semantic"){
-	$table = "ISIterms";
+	$table = ($isAdeme)? "ISIkeyword" : "ISIterms";
 	$column = "data";
 	$id = "id";
 	$restriction='';
@@ -54,6 +54,7 @@ GROUP BY '.$id.'
 ORDER BY count('.$id.') DESC
 LIMIT 1000';
 
+//echo $sql;
 
 #$queryparsed=$sql;#####
 
