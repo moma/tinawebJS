@@ -13,6 +13,7 @@ $output = "<ul>"; // string sent to the javascript for display
 
 
 $type = $_GET["type"];
+$TITLE="ISITITLE";
 $query = str_replace( '__and__', '&', $_GET["query"] );
 $elems = json_decode($query);
 $table = "";
@@ -25,17 +26,19 @@ $table_for_semantic="";
 $isAdeme=$_SERVER["PHP_SELF"];
 if (strpos($isAdeme, 'ademe')) {
     $isAdeme=true;
+    $bi = ($_GET["bi"]==1)?true:false;
     if (strpos($graphdb, 'academic')){
         $table_for_social="ISIkeyword";
-        $table_for_semantic="ISIkeyword";//and in bigraph is ISISO
+        $table_for_semantic=($bi)?"ISISO":"ISIkeyword";//bigraph => ISISO
     }
     if (strpos($graphdb, 'blogs')) {
         $table_for_social="ISISO";
-        $table_for_semantic="ISIterms";//and in bigraph is ISIterms     
+        $table_for_semantic="ISIterms";
     }
     if (strpos($graphdb, 'press')){
         $table_for_social="Journal";
-        $table_for_semantic="ISIterms";     
+        $table_for_semantic="ISIterms";
+        $TITLE="Title";
     }
 }
 
@@ -72,7 +75,6 @@ ORDER BY count('.$id.') DESC
 LIMIT 1000';
 
 //echo $sql;
-
 #$queryparsed=$sql;#####
 
 $wos_ids = array();
@@ -97,7 +99,7 @@ foreach ($wos_ids as $id => $score) {
 		$count+=1;
 		$output.="<li title='".$score."'>";
 		$output.=imagestar($score,$factor,$twjs).' ';	
-		$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
+		$sql = 'SELECT data FROM '.$TITLE.' WHERE id='.$id;
 
 		foreach ($base->query($sql) as $row) {
 			$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
