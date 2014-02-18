@@ -3,8 +3,6 @@
 
 $thedb = $graphdb;
 // just for papers detail for ademe
-$isAdeme=$_SERVER["PHP_SELF"];
-if (strpos($isAdeme, 'ademe') !== false) $isAdeme=true;
 
 $output = "<ul>"; // string sent to the javascript for display
 
@@ -22,8 +20,27 @@ $column = "";
 $id="";
 $twjs="tinawebJS/"; // submod path of TinaWebJS
 
+$table_for_social="";
+$table_for_semantic="";
+$isAdeme=$_SERVER["PHP_SELF"];
+if (strpos($isAdeme, 'ademe')) {
+    $isAdeme=true;
+    if (strpos($graphdb, 'academic')){
+        $table_for_social="ISIkeyword";
+        $table_for_semantic="ISIkeyword";//and in bigraph is ISISO
+    }
+    if (strpos($graphdb, 'blogs')) {
+        $table_for_social="ISISO";
+        $table_for_semantic="ISIterms";//and in bigraph is ISIterms     
+    }
+    if (strpos($graphdb, 'press')){
+        $table_for_social="Journal";
+        $table_for_semantic="ISIterms";     
+    }
+}
+
 if($type=="social"){
-	$table = ($isAdeme)? "ISISO" : "ISIAUTHOR";
+	$table = ($isAdeme)? $table_for_social : "ISIAUTHOR";
 	$column = "data";
 	$id = "id";
 	$restriction='';
@@ -31,7 +48,7 @@ if($type=="social"){
 }
 
 if($type=="semantic"){
-	$table = ($isAdeme)? "ISIkeyword" : "ISIterms";
+	$table = ($isAdeme)? $table_for_semantic : "ISIterms";
 	$column = "data";
 	$id = "id";
 	$restriction='';
