@@ -23,8 +23,9 @@ $twjs="tinawebJS/"; // submod path of TinaWebJS
 
 $table_for_social="";
 $table_for_semantic="";
-$isAdeme=$_SERVER["PHP_SELF"];
-if (strpos($isAdeme, 'ademe')) {
+$isAdeme=$_SERVER["HTTP_HOST"];
+
+if (strpos($isAdeme, "ademe")!==false) {
     $isAdeme=true;
     $bi = ($_GET["bi"]==1)?true:false;
     if (strpos($graphdb, 'academic')){
