@@ -247,7 +247,7 @@ if (true){
 			$sql2='SELECT ISIpubdate.id,ISIC1_1.data from ISIpubdate,ISIC1_1 where ISIC1_1.data="'.$row['data'].'" AND  ISIpubdate.id=ISIC1_1.id AND ISIpubdate.data="2013"  limit 1';
 			//echo $sql2;
 			foreach ($corporadb->query($sql2) as $row2){
-				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($corporadb_name).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+				$nov_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($graphdb).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
 			}		
 		}
 	}
@@ -266,7 +266,7 @@ if (true){
 			$sql2='SELECT ISIpubdate.id,ISIC1_1.data from ISIpubdate,ISIC1_1 where ISIC1_1.data="'.$row['data'].'" AND  ISIpubdate.id=ISIC1_1.id AND ISIpubdate.data="2013"  limit 1';
 			//echo $sql2;
 			foreach ($corporadb->query($sql2) as $row2){
-				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($corporadb_name).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
+				$res_string.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($graphdb).'&gexf='.urlencode($gexf).'&query='.urlencode('["'.$res[$i].'"]').'&type='.urlencode($_GET["type"]).'&id='.$row2['id'].'	\')">'.$res[$i]."</a>, ";	
 			}		
 		}
 	}
