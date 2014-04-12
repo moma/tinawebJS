@@ -3,6 +3,10 @@
 $db= $_GET["db"];//I receive the specific database as string!
 include('parameters_details.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
+$query = str_replace( '__and__', '&', $_GET["query"] );
+$terms_of_query = json_decode($query);
+
+
 echo '
 <html>
         <head>
@@ -56,9 +60,9 @@ if (($is_favorite==1)&&($favorite==0)){// on retire des favoris
 }
 /// on affiche le lien
 if (($is_favorite==1)){// on retire de favoris
-  echo '<a href="default_doc_details.php?favorite=0&db='.urlencode($db).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'&id='.$id.'">remove from favorite</a>';
+  echo '<a href="default_doc_details.php?favorite=0&db='.urlencode($db).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'&id='.$id.'">remove from favorites</a>';
 }else{
-  echo '<a href="default_doc_details.php?favorite=1&db='.urlencode($db).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'&id='.$id.'&favorite=1  \')">add to favorite</a>';
+  echo '<a href="default_doc_details.php?favorite=1&db='.urlencode($db).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'&id='.$id.'&favorite=1  \')">add to favorites</a>';
 }
 
 ////////////////////////////
