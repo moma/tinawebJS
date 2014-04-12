@@ -1270,11 +1270,11 @@ function createEdgesForExistingNodes (typeOfNodes) {
                         
                 }
                 else {
-                    if((typeof Edges[i1])!="undefined" && Edges[i1].label=="bipartite"){
+                    if((typeof Edges[i1])!="undefined"){// && Edges[i1].label=="bipartite"){
                         //I've found a source Node
                         unHide(indexS1+";"+indexT1);
                     }
-                    if((typeof Edges[i2])!="undefined" && Edges[i2].label=="bipartite"){
+                    if((typeof Edges[i2])!="undefined"){// && Edges[i2].label=="bipartite"){
                         //I've found a target Node
                         unHide(indexS2+";"+indexT2);
                     }
@@ -1282,13 +1282,13 @@ function createEdgesForExistingNodes (typeOfNodes) {
             }            
         }
     }
-    else {   
+    else {  
         for(i=0; i < existingNodes.length ; i++){
             for(j=(i+1); j < existingNodes.length ; j++){
                     
                 i1=existingNodes[i].id+";"+existingNodes[j].id; 
                 i2=existingNodes[j].id+";"+existingNodes[i].id; 
-                
+
                 if((typeof Edges[i1])!="undefined" && (typeof Edges[i2])!="undefined" && i1!=i2){
                     
                         if(typeOfNodes=="Scholars") { 
@@ -1305,7 +1305,7 @@ function createEdgesForExistingNodes (typeOfNodes) {
                             }
                         }
                         if(typeOfNodes=="Keywords") { 
-                            if(Edges[i1].label=="nodes2" && Edges[i2].label=="nodes2"){                              
+                            if(Edges[i1].label=="nodes2" && Edges[i2].label=="nodes2"){ 
                                 if(Edges[i1].weight > Edges[i2].weight){
                                     unHide(i1);
                                 }
@@ -1317,7 +1317,14 @@ function createEdgesForExistingNodes (typeOfNodes) {
                                 }
                             }
                         }
-                }  
+                }
+                else {
+                    e=(typeof(Edges[i1])!=="undefined")?Edges[i1]:Edges[i2]
+                    if(typeof(e)!=="undefined"){
+                        if(typeOfNodes=="Scholars" && e.label=="nodes1") unHide(e.id)
+                        if(typeOfNodes=="Keywords" && e.label=="nodes2") unHide(e.id) 
+                    }
+                }
             }  
         }  
     }
