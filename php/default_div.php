@@ -45,6 +45,8 @@ if (strpos($gexf,'2013')>0){
 if($project_folder=='nci'){
 	$year_filter=true;	
 	$top_displayed=5;// nombre de novelty and impact displayed
+	$nov_impact_max_freq=30; //nb mas d'occurrences pour qu'un terme soit considérer dans la liste des impacts ou novelties
+	$max_selection_size=20; // taille max de la selection pour faire apparaitre les impacts ou novelty
 	
 }
 
@@ -194,8 +196,8 @@ foreach ($wos_ids as $id => $score) {
 	
 			$output.=$external_link."</li><br>";	
 
-			//
-			$sql = 'SELECT data FROM ISIterms WHERE id='.$id;
+			//SELECT ISIterms.data,termsFreq.freq FROM ISIterms,termsFreq WHERE ISIterms.id=3104 AND ISIterms.data=termsFreq.data   AND termsFreq.freq<48
+			$sql = 'SELECT ISIterms.data,termsFreq.freq FROM ISIterms,termsFreq WHERE ISIterms.id='.$id. ' AND ISIterms.data=termsFreq.data AND termsFreq.freq<'.$nov_impact_max_freq;
 			foreach ($base->query($sql) as $row) {
 				$all_terms_from_selected_projects[]=$row['data'];
 			}		
@@ -209,13 +211,13 @@ foreach ($wos_ids as $id => $score) {
 $output .= "</ul>"; #####
 
 
-if ($project_folder=='nci'){
+if (($project_folder=='nci')&&(count($elems)<$max_selection_size)){
 	// for NCI we compare the impact and novelty score making the difference if there are more than 4 terms selected
 	$news='';//new terms
-	$elems=array_unique($all_terms_from_selected_projects); 
-	if(count($elems)>3){
+	$terms_from_selected_projects=array_unique($all_terms_from_selected_projects); 
+	if(count($terms_from_selected_projects)>3){
 	$diff=array();
-	foreach ($elems as $key => $term) {
+	foreach ($terms_from_selected_projects as $key => $term) {
 		$sql=	"select  count(*),ISIterms.id, ISIterms.data from ISIterms join ISIpubdate on (ISIterms.id=ISIpubdate.id AND ISIpubdate.data=2011 AND ISIterms.data='".$term."') group by ISIterms.data";
 		$nov=0;
 		foreach ($corporadb->query($sql) as $row) {
@@ -230,6 +232,7 @@ if ($project_folder=='nci'){
 		//echo $term.'-nov: '.$nov.'- imp:'.$imp.'<br/>';//'-info'.$diff[$term].
 	}	
 
+if (true){
 	arsort($diff);
 	$res=array_keys($diff);
 	//echo implode(', ', $res);
@@ -237,7 +240,7 @@ if ($project_folder=='nci'){
 	for ($i=0;$i<$top_displayed;$i++){
 
 		// on récupère les titres du document qui a le plus for impact
-		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
+		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER ORDER BY RANDOM()  limit 1";	
 		//echo $sql;
 
 		//on récupère les id associés.
@@ -257,7 +260,7 @@ if ($project_folder=='nci'){
 	for ($i=0;$i<$top_displayed;$i++){
 
 		// on récupère les titres du document qui a le plus for impact
-		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2012' group by ISIterms.id ORDER BY count(ISIterms.id) DESC  limit 1";	
+		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2012' group by ISIterms.id ORDER BY RANDOM()limit 1";	
 
 		//on récupère les id associés.
 		foreach ($corporadb->query($sql) as $row){
@@ -269,6 +272,7 @@ if ($project_folder=='nci'){
 		}
 	}
 	$news.='<br/><b><font color="#CF5300">Top '.$top_displayed.' Impact related terms: </font></b>'.$res_string.'<br/>';	
+}
 }	
 }
 // display the most occuring terms when only one is selected.

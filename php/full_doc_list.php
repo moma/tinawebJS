@@ -83,7 +83,7 @@ GROUP BY '.$id.'
 ORDER BY count('.$id.') DESC
 LIMIT 1000';
 
-
+echo $sql;
 #$queryparsed=$sql;#####
 
 $wos_ids = array();

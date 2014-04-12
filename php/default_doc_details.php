@@ -30,12 +30,44 @@ echo '
     <div id="tabs">
   <ul>
     <li><a href="#tabs-1">Selected Document</a></li>
-    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.urlencode($_GET["type"]).'&query='.urlencode($_GET["query"]).'">Full list</a></li>';    
+    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.json_encode($_GET["type"]).'&query='.urlencode($_GET["query"]).'">Full list</a></li>    
+    <li><a href="favorite.php?'.'db='.urlencode($_GET["db"]).'&type='.json_encode($_GET["type"]).'&query='.urlencode($_GET["query"]).'">Favorites</a></li>';    
   echo '</ul>';
 
 echo '<div id="tabs-1">';
 
+////////// GEstion des documents favoris //////////
 $id=$_GET["id"];
+$favorite=$_GET["favorite"];// 1 means add to favorite, 0 means remove from favorites
+if (is_null($favorite)){
+  $favorite=-1;
+}
+
+// check if this is a favorite
+$sql='SELECT id from favorites WHERE id='.$id;
+$is_favorite=0;
+// on regarde si c'est un favori
+foreach ($base->query($sql) as $row){
+  $is_favorite=1;
+}
+if (($is_favorite==1)&&($favorite==0)){// on retire des favoris
+  $sql='DELETE FROM favorites where id='.$id.'';  
+  $base->query($sql); 
+  $is_favorite=0;
+}elseif (($is_favorite==0)&&($favorite==1)){
+  $sql='INSERT INTO favorites (id) Values ('.$id.')'; 
+  $base->query($sql);
+  $is_favorite=1;
+}
+/// on affiche le lien
+if (($is_favorite==1)){// on retire de favoris
+  echo '<a href="default_doc_details.php?favorite=0&db='.urlencode($db).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'&id='.$id.'">remove from favorite</a>';
+}else{
+  echo '<a href="default_doc_details.php?favorite=1&db='.urlencode($db).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'&id='.$id.'&favorite=1  \')">add to favorite</a>';
+}
+
+////////////////////////////
+
 //$elems = json_decode($query);
 	$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 	foreach ($base->query($sql) as $row) {
