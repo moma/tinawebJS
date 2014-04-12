@@ -1,13 +1,8 @@
 <?php
 
 $db= $_GET["db"];//I receive the specific database as string!
-$terms_of_query=json_decode($_GET["query"]);
-
 include('parameters_details.php');
-include('../../geomap/php/countries_iso3166.php');
 $base = new PDO("sqlite:" .$mainpath.$db);
-
-
 echo '
 <html>
         <head>
@@ -30,8 +25,8 @@ echo '
     <div id="tabs">
   <ul>
     <li><a href="#tabs-1">Selected Document</a></li>
-    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.json_encode($_GET["type"]).'&query='.urlencode($_GET["query"]).'">Full list</a></li>    
-    <li><a href="favorite.php?'.'db='.urlencode($_GET["db"]).'&type='.json_encode($_GET["type"]).'&query='.urlencode($_GET["query"]).'">Favorites</a></li>';    
+    <li><a href="full_doc_list.php?'.'db='.urlencode($_GET["db"]).'&type='.urlencode($_GET["type"]).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'">Full list</a></li>
+    <li><a href="favorite.php?'.'db='.urlencode($_GET["db"]).'&type='.urlencode($_GET["type"]).'&query='.urlencode($_GET["query"]).'&type='.urlencode($_GET["type"]).'">Favorites</a></li>';    
   echo '</ul>';
 
 echo '<div id="tabs-1">';

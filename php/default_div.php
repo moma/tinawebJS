@@ -176,7 +176,7 @@ foreach ($wos_ids as $id => $score) {
 			$sql = 'SELECT data FROM ISITITLE WHERE id='.$id;
 
 			foreach ($base->query($sql) as $row) {
-				$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($thedb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
+				$output.='<a href="JavaScript:newPopup(\''.$twjs.'php/default_doc_details.php?db='.urlencode($graphdb).'&gexf='.urlencode($gexf).'&query='.urlencode($query).'&type='.urlencode($_GET["type"]).'&id='.$id.'	\')">'.$row['data']." </a> ";
 				$external_link="<a href=http://scholar.google.com/scholar?q=".urlencode('"'.$row['data'].'"')." target=blank>".' <img width=8% src="'.$twjs.'img/gs.png"></a>';	
 			}
 
@@ -240,8 +240,7 @@ if (true){
 	for ($i=0;$i<$top_displayed;$i++){
 
 		// on récupère les titres du document qui a le plus for impact
-		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER ORDER BY RANDOM()  limit 1";	
-		//echo $sql;
+		$sql="SELECT ISIterms.id,ISIC1_1.data,count(*) from ISIterms,ISIpubdate,ISIC1_1 where ISIterms.data='".$res[$i]."' AND  ISIterms.id=ISIpubdate.id AND ISIterms.id=ISIC1_1.id AND ISIpubdate.data='2011' group by ISIterms.id ORDER BY RANDOM()  limit 1";	
 
 		//on récupère les id associés.
 		foreach ($corporadb->query($sql) as $row){
