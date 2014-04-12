@@ -1554,11 +1554,15 @@ function changeToMacro(iwannagraph) {
         if(swclickPrev=="social") {
                 for(var i in partialGraph._core.graph.edgesIndex){
                     e=partialGraph._core.graph.edgesIndex[i];
-                    if(e.hidden==true) e.hidden=false;
+                    if(e.hidden==true) {
+                        if(e.label=="nodes1") e.hidden=false;
+                    }
                 }
                 for(var i in partialGraph._core.graph.nodesIndex){
                     n=partialGraph._core.graph.nodesIndex[i];
-                    if(n.hidden==true) n.hidden=false;
+                    if(n.hidden==true) {
+                        if(n.type==catSoc) n.hidden=false;
+                    }
                 }
         } else {            
             hideEverything()

@@ -68,3 +68,15 @@ function getSelections(){
         }
         return params;
 }
+
+function getNeighs(sels,arr){ 
+    neighDict={};
+    for(var i in sels) {
+        A=arr[i].neighbours;
+        for(var j in A){
+            neighDict[A[j]]=1
+        }
+        neighDict[i]=1;
+    }    
+    return neighDict;
+}

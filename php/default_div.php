@@ -41,7 +41,7 @@ if (strpos($isAdeme, "ademe")!==false) {
         $table_for_semantic="ISIterms";
         $TITLE="Title";
     }
-}
+} else $isAdeme=false;
 
 if($type=="social"){
 	$table = ($isAdeme)? $table_for_social : "ISIAUTHOR";

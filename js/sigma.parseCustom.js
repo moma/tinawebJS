@@ -46,6 +46,8 @@ function scanCategories(){
     return Object.keys(categories).length;
 }
 
+
+
 function onepartiteExtract(){
     
     var i, j, k;
@@ -386,7 +388,7 @@ function fullExtract(){
                 attributes:[], 
                 color:color
             });  // The graph node
-                
+
             // Attribute values
             var attvalueNodes = nodeNode.getElementsByTagName('attvalue');
             var atts={};
@@ -575,3 +577,152 @@ function fullExtract(){
 }
     
 
+function extractFromJson(data){
+    var i, j, k;
+    //partialGraph.emptyGraph();
+    // Parse Attributes
+    // This is confusing, so I'll comment heavily
+    var nodesAttributes = [];   // The list of attributes of the nodes of the graph that we build in json
+    var edgesAttributes = [];   // The list of attributes of the edges of the graph that we build in json
+    //var attributesNodes = gexf.getElementsByTagName('attributes');  // In the gexf (that is an xml), the list of xml nodes 'attributes' (note the plural 's')
+    
+    var nodesNodes = data.nodes // The list of xml nodes 'nodes' (plural)
+    labels = [];
+    numberOfDocs=0;
+    numberOfNGrams=0;
+    
+    categories[catSoc]=catSoc;
+    categories[catSem]=catSem;
+    categoriesIndex[0]=catSoc;
+    categoriesIndex[1]=catSem;
+
+    for(var i in nodesNodes){
+            colorRaw = nodesNodes[i].color.split(",");
+            color = '#'+sigma.tools.rgbToHex(
+                    parseFloat(colorRaw[2]),
+                    parseFloat(colorRaw[1]),
+                    parseFloat(colorRaw[0]));
+                    //Colors inverted... Srsly??
+            
+            var node = ({
+                id:i,
+                label:nodesNodes[i].label, 
+                size:1, 
+                x:nodesNodes[i].x, 
+                y:nodesNodes[i].y, 
+                //x:Math.random(),
+                //y:Math.random(),
+                type:"",
+                htmlCont:"",
+                color:color
+            });  // The graph node
+            if(nodesNodes[i].type=="Document"){
+                node.htmlCont = nodesNodes[i].content;
+                node.type="Document";
+                node.shape="square";
+                numberOfDocs++;
+                node.size=desirableScholarSize;
+            }
+            else {
+                node.type="NGram";
+                numberOfNGrams++;
+                node.size=parseInt(nodesNodes[i].term_occ).toFixed(2);
+                if(parseInt(node.size) < parseInt(minNodeSize)) minNodeSize= node.size;
+                if(parseInt(node.size) > parseInt(maxNodeSize)) maxNodeSize= node.size;
+            }
+            Nodes[i] = node;
+    }
+
+    for(var i in Nodes){
+        if(Nodes[i].type=="NGram") {
+            normalizedSize=desirableNodeSizeMIN+(Nodes[i].size-1)*((desirableNodeSizeMAX-desirableNodeSizeMIN)/(parseInt(maxNodeSize)-parseInt(minNodeSize)));
+            Nodes[i].size = ""+normalizedSize;
+            
+            nodeK = Nodes[i];
+            nodeK.hidden=true;/**///should be uncommented
+            partialGraph.addNode(i,nodeK);   
+        }
+        else {
+            partialGraph.addNode(i,Nodes[i]);  
+            unHide(i);
+        }
+    }
+    
+    var edgeId = 0;
+    var edgesNodes = data.edges;
+    for(var i in edgesNodes){
+        //pr(edgesNodes[i]);
+        var indice=edgesNodes[i].s+";"+edgesNodes[i].t;
+        var source = edgesNodes[i].s;
+        var target = edgesNodes[i].t;
+        var edge = {
+                id:         indice,
+                sourceID:   source,
+                targetID:   target,
+                label:      edgesNodes[i].type,
+                weight: edgesNodes[i].w
+            };
+        if(edge.weight < minEdgeWeight) minEdgeWeight= edge.weight;
+        if(edge.weight > maxEdgeWeight) maxEdgeWeight= edge.weight;
+        Edges[indice] = edge;
+        
+        
+        
+        
+            if(edge.label=="nodes1"){             
+                if( (typeof partialGraph._core.graph.edgesIndex[target+";"+source])=="undefined" ){
+                    edge.hidden=false;
+                }
+                else edge.hidden=true;
+                
+                if((typeof nodes1[source])=="undefined"){
+                    nodes1[source] = {
+                        label: Nodes[source].label,
+                        neighbours: []
+                    };
+                    nodes1[source].neighbours.push(target);
+                }
+                else nodes1[source].neighbours.push(target);
+            }
+            
+            
+            if(edge.label=="nodes2"){ 
+                edge.hidden=true;
+                if((typeof nodes2[source])=="undefined"){
+                    nodes2[source] = {
+                        label: Nodes[source].label,
+                        neighbours: []
+                    };
+                    nodes2[source].neighbours.push(target);
+                }
+                else nodes2[source].neighbours.push(target);
+            }
+            
+            
+            if(edge.label=="bipartite"){   
+                edge.hidden=true;
+                // Document to NGram 
+                if((typeof bipartiteD2N[source])=="undefined"){
+                    bipartiteD2N[source] = {
+                        label: Nodes[source].label,
+                        neighbours: []
+                    };
+                    bipartiteD2N[source].neighbours.push(target);
+                }
+                else bipartiteD2N[source].neighbours.push(target);
+                
+                // NGram to Document 
+                if((typeof bipartiteN2D[target])=="undefined"){
+                    bipartiteN2D[target] = {
+                        label: Nodes[target].label,
+                        neighbours: []
+                    };
+                    bipartiteN2D[target].neighbours.push(source);
+                }
+                else bipartiteN2D[target].neighbours.push(source);
+            }
+            
+            //edge.hidden=false/**///should be commented
+            partialGraph.addEdge(indice,source,target,edge);
+    }
+}

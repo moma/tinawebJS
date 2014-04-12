@@ -1,24 +1,36 @@
-listGexfs();
 
-if(typeof(getUrlParam.file)!=="undefined"){
-    $.doTimeout(30,function (){
-        parse(getUrlParam.file);
-        nb_cats = scanCategories();  
-        pr("nb_cats: "+nb_cats);
-        listGexfs();
-        
-        if(nb_cats==1) bringTheNoise(getUrlParam.file,"mono");
-        else if(nb_cats==2) bringTheNoise(getUrlParam.file,"bi")
-        
-        $.doTimeout(30,function (){
-            if(typeof(gexfDict[getUrlParam.file])!=="undefined"){
-                $("#currentGraph").html(gexfDict[getUrlParam.file]);
-            } else $("#currentGraph").html(getUrlParam.file);
-            scanDataFolder();
-        });            
-    });
+if (mainfile) {
+	listGexfs();
+	if(typeof(getUrlParam.file)!=="undefined"){
+	    $.doTimeout(30,function (){
+		parse(getUrlParam.file);
+		nb_cats = scanCategories();  
+		pr("nb_cats: "+nb_cats);
+		listGexfs();
+		
+		if(nb_cats==1) bringTheNoise(getUrlParam.file,"mono");
+		else if(nb_cats==2) bringTheNoise(getUrlParam.file,"bi")
+		
+		$.doTimeout(30,function (){
+		    if(typeof(gexfDict[getUrlParam.file])!=="undefined"){
+		        $("#currentGraph").html(gexfDict[getUrlParam.file]);
+		    } else $("#currentGraph").html(getUrlParam.file);
+		    scanDataFolder();
+		});            
+	    });
+	} else {
+	    window.location.href=window.location.origin+window.location.pathname+"?file="+mainfile;
+	}
 } else {
-    window.location.href=window.location.origin+window.location.pathname+"?file="+mainfile;
+
+    if(getUrlParam.nodeidparam.indexOf("__")===-1){
+        //gexfPath = "php/bridgeClientServer_filter.php?query="+getUrlParam.nodeidparam;
+        pr("not implemented yet");
+    }
+    else {
+	param=getUrlParam.nodeidparam;
+	bringTheNoise(param,"unique_id");
+    }
 }
 
 function scanDataFolder(){
@@ -82,29 +94,51 @@ function listGexfs(){
 }
 
 function bringTheNoise(pathfile,type){
-    pr("I'm in the new function");
     partialGraph = sigma.init(document.getElementById('sigma-example'))
     .drawingProperties(sigmaJsDrawingProperties)
     .graphProperties(sigmaJsGraphProperties)
     .mouseProperties(sigmaJsMouseProperties);
-    
+    pr("something happened")
+
     sigmaheight=$('#leftcolumn').height();
     $('.sigma-parent').height(sigmaheight);
     
-    partialGraph = sigma.init(document.getElementById('sigma-example'))
-    .drawingProperties(sigmaJsDrawingProperties)
-    .graphProperties(sigmaJsGraphProperties)
-    .mouseProperties(sigmaJsMouseProperties);
     startMiniMap();
     
-    console.log("parsing...");       
-    parse(decodeURIComponent(pathfile));
-    
-    if(type=="mono") {
-        onepartiteExtract(); 
-        $("#left").hide();
-    } else if(type=="bi") {
-        fullExtract(); 
+    console.log("parsing..."); 
+    if(mainfile) {
+	    parse(decodeURIComponent(pathfile));
+	    if(type=="mono") {
+		onepartiteExtract(); 
+		$("#left").hide();
+	    } else if(type=="bi") {
+		fullExtract(); 
+	    }
+    } else {
+	    if(type=="unique_id") {
+		pr("inside bring the noise... unique_id");
+
+		$.ajax({
+		    type: 'GET',
+		    url: bridge["forNormalQuery"],
+		    data: "unique_id="+pathfile+"&it="+iterationsFA2,
+		    contentType: "application/json",
+		    dataType: 'jsonp',
+		    async: false,
+		    success : function(data){ 
+			extractFromJson(data);
+		    },
+		    error: function(){ 
+		        pr("Page Not found. parseCustom, inside the IF");
+		    }
+		});
+
+
+
+
+
+
+	    }
     }
     if(fa2enabled==="off") $("#edgesButton").hide();
     updateEdgeFilter("social");
