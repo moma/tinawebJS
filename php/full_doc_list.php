@@ -3,10 +3,10 @@ include('parameters_details.php');
 include('../../geomap/php/countries_iso3166.php');
   
 $db= $_GET["db"];//I receive the specific database as string!
+$base = new PDO("sqlite:" .$mainpath.$db);
+
 $query=$_GET["query"];
 $gexf=$_GET["gexf"];
-
-$base = new PDO("sqlite:" .$mainpath.$db);
 
 $temp=explode('/',$db);
 $project_folder=$temp[1];
@@ -15,13 +15,14 @@ $corporadb = new PDO("sqlite:" .$mainpath.'data/'.$corpora.'/'.$corpora.'.sqlite
 
 
 $output = "<ul>"; // string sent to the javascript for display
-
 #http://localhost/branch_ademe/php/test.php?type=social&query=[%22marwah,%20m%22]
 
 
 $type = $_GET["type"];
 $query = str_replace( '__and__', '&', $_GET["query"] );
+$terms_of_query=json_decode($_GET["query"]);
 $elems = json_decode($query);
+
 // nombre d'item dans les tables 
 $sql='SELECT COUNT(*) FROM ISIABSTRACT';
 foreach ($base->query($sql) as $row) {
@@ -82,7 +83,6 @@ FROM '.$table.' where (';
 GROUP BY '.$id.'
 ORDER BY count('.$id.') DESC
 LIMIT 1000';
-
 
 #$queryparsed=$sql;#####
 
