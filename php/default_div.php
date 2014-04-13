@@ -77,20 +77,34 @@ if($project_folder=='nci'){
 }		
 
 //////////
-$sql = 'SELECT count(*),'.$id.'
-FROM '.$table.' where (';
-        foreach($elems as $elem){
-                $sql.=' '.$column.'="'.$elem.'" OR ';
+if (count($elems)==1){// un seul mot est sélectionné, on compte les mots multiples
+	$sql = 'SELECT count(*),'.$id.'
+	FROM '.$table.' where (';
+        	foreach($elems as $elem){
+              	$sql.=' '.$column.'="'.$elem.'" OR ';
+        	}
+	#$querynotparsed=$sql;#####
+    $sql = substr($sql, 0, -3);
+    $sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
+    $sql.=')'.$restriction.'
+	GROUP BY '.$id.'
+	ORDER BY count('.$id.') DESC
+	LIMIT 1000';
+}else{// on compte une seule fois un mot dans un article
+	$factor=ceil(count($elems)/5); //les scores sont moins haut
+	$sqlquery='';
+	foreach($elems as $elem){
+          	$sqlquery.=' '.$column.'="'.$elem.'" OR ';
         }
-#$querynotparsed=$sql;#####
-        $sql = substr($sql, 0, -3);
-        $sql = str_replace( ' & ', '" OR '.$column.'="', $sql );
+    $sqlquery=substr($sqlquery, 0, -3);
+    $sql='SELECT count(*),id,data FROM (SELECT *
+	FROM '.$table.' where ('.$sqlquery.')'.$restriction.'
+	 group by id,data) GROUP BY '.$id.'
+	ORDER BY count('.$id.') DESC
+	LIMIT 1000';
 
-        $sql.=')'.$restriction.'
-GROUP BY '.$id.'
-ORDER BY count('.$id.') DESC
-LIMIT 1000';
-#$queryparsed=$sql;#####
+}
+
 
 $wos_ids = array();
 $sum=0;
