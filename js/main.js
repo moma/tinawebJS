@@ -98,10 +98,14 @@ function bringTheNoise(pathfile,type){
     .drawingProperties(sigmaJsDrawingProperties)
     .graphProperties(sigmaJsGraphProperties)
     .mouseProperties(sigmaJsMouseProperties);
-    pr("something happened")
 
     sigmaheight=$('#leftcolumn').height();
     $('.sigma-parent').height(sigmaheight);
+    
+    partialGraph = sigma.init(document.getElementById('sigma-example'))
+    .drawingProperties(sigmaJsDrawingProperties)
+    .graphProperties(sigmaJsGraphProperties)
+    .mouseProperties(sigmaJsMouseProperties);
     
     startMiniMap();
     
