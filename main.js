@@ -727,7 +727,7 @@ function SigmaLayouting( URL, DATA, NAME) {
                     // < === ASYNCHRONOUS FA2.JS === >
 
                     pr(getClientTime()+" : Ini FA2");
-                    var ForceAtlas2 = new Worker("tinawebJS/FA2.js");
+                    var ForceAtlas2 = new Worker("tinawebJS/asyncFA2.js");
                     ForceAtlas2.postMessage({
                         "nodes": partialGraph._core.graph.nodes,
                         "edges": partialGraph._core.graph.edges,
@@ -774,7 +774,7 @@ function SigmaLayouting( URL, DATA, NAME) {
 
 
                         // [ semantic layouting ]
-                        var ForceAtlas2_ = new Worker("tinawebJS/FA2.js");
+                        var ForceAtlas2_ = new Worker("tinawebJS/asyncFA2.js");
                         ForceAtlas2_.postMessage({ 
                             "nodes": otherGraph._core.graph.nodes,
                             "edges": otherGraph._core.graph.edges,
