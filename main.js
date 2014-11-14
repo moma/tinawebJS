@@ -125,6 +125,8 @@ function bringTheNoise(pathfile,type){
         // $('#taboppos').click();
         $.doTimeout(500,function (){
             $('.etabs a[href="#tabs1"]').trigger('click');
+            $("#opossiteNodes").readmore({maxHeight:200}); 
+            $("#sameNodes").readmore({maxHeight:200}); 
         });
 
 		printStates()

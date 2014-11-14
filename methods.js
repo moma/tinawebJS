@@ -503,7 +503,7 @@ function updateLeftPanel_fix() {
     $("#names").html(namesDIV).readmore({maxHeight:100}); 
     $("#tab-container").show();
     $("#opossiteNodes").html(alterNodesDIV).readmore({maxHeight:200}); 
-    $("#sameNodes").html(sameNodesDIV)
+    $("#sameNodes").html(sameNodesDIV).readmore({maxHeight:200}); 
     $("#information").html(informationDIV);
     $("#tips").html("");
     // $("#topPapers").show();
