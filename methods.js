@@ -1583,9 +1583,9 @@ function changeToMeso(iwannagraph) {
             socsemFlag=true;
         }
         
-        // EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-        // NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size") 
-        // EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
+        $("#category-B").show();
+        EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
+        NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
         $("#colorGraph").hide();
     }
      
@@ -1691,6 +1691,9 @@ function changeToMeso(iwannagraph) {
             }
         }
         
+        $("#category-B").show();
+        EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
+        NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
         // EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
         // NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size") 
         $("#colorGraph").hide();
@@ -1737,6 +1740,11 @@ function changeToMacro(iwannagraph) {
         createEdgesForExistingNodes(iwannagraph);
 
         if(iwannagraph=="social") showMeSomeLabels(6);
+        else {
+            $("#category-B").show();
+            EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
+            NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+        }
         swMacro=true;
 
         if (!is_empty(selections))

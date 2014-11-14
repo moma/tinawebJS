@@ -699,7 +699,7 @@ function SigmaLayouting( URL, DATA, NAME) {
         dataType: 'jsonp',
         async: true,
         success : function(data) {
-        	pr(data)
+        	        pr(data)
                     if(!isUndef(getUrlParam.seed))seed=getUrlParam.seed;
                     extractFromJson(data,seed);
 
@@ -809,9 +809,10 @@ function SigmaLayouting( URL, DATA, NAME) {
                                 // $("#sliderBEdgeWeight").html("");
                                 // $("#sliderBNodeWeight").html("");
                                 $("#category-B").show();
-                                $("#colorGraph").hide();
                                 EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
                                 NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+                                $("#colorGraph").hide();
+                            
                                 
                             }
     
