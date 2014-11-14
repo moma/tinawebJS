@@ -122,6 +122,11 @@ function bringTheNoise(pathfile,type){
         changeType();
 
 
+        // $('#taboppos').click();
+        $.doTimeout(500,function (){
+            $('.etabs a[href="#tabs1"]').trigger('click');
+        });
+
 		printStates()
     	pr(" ############  / changeTYPE click");
     	pr("")
@@ -134,6 +139,7 @@ function bringTheNoise(pathfile,type){
     	printStates()
 
         changeLevel();
+        // $("#tabs1").click()
 
         printStates()
     	pr(" ############  / changeLEVEL click");
