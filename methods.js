@@ -424,8 +424,14 @@ function updateLeftPanel_fix() {
     informationDIV += htmlfied_nodesatts( getNodeIDs(selections) ).join("<br>\n")
     informationDIV += '</ul><br>';
 
-    $("#names").html(namesDIV); 
-    $("#opossiteNodes").html(alterNodesDIV); 
+    //using the readmore.js
+    // ive put a limit for nodes-name div
+    // and opposite-nodes div aka tagcloud div
+    // and im commenting now because github is not 
+    // pushing my commit
+    // because i need more lines, idk
+    $("#names").html(namesDIV).readmore({maxHeight:100}); 
+    $("#opossiteNodes").html(alterNodesDIV).readmore({maxHeight:300}); 
     $("#information").html(informationDIV);
     $("#tips").html("");
     // $("#topPapers").show();
