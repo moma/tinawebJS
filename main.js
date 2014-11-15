@@ -114,6 +114,13 @@ function bringTheNoise(pathfile,type){
     body.style.paddingTop="41px";
 
 
+    $('.etabs').click(function(){
+        $.doTimeout(500,function (){
+            $("#opossiteNodes").readmore({maxHeight:200}); 
+            $("#sameNodes").readmore({maxHeight:200}); 
+        });
+    });
+
     $("#changetype").click(function(){
     	pr("")
     	pr(" ############  changeTYPE click");
@@ -121,12 +128,8 @@ function bringTheNoise(pathfile,type){
 
         changeType();
 
-
-        // $('#taboppos').click();
         $.doTimeout(500,function (){
             $('.etabs a[href="#tabs1"]').trigger('click');
-            $("#opossiteNodes").readmore({maxHeight:200}); 
-            $("#sameNodes").readmore({maxHeight:200}); 
         });
 
 		printStates()

@@ -356,65 +356,16 @@ function htmlfied_alternodes(elems) {
 
 function htmlfied_samenodes(elems) {
     var sameNodes=[]
-    // js1='onclick="graphTagCloudElem(\'';
-    // js2="');\""
-    // // var js1="" , js2="";
-
 
     if(elems.length>0) {
         var A = getVisibleNodes()
         for (var a in A){
             n = A[a]
             if(!n.active && n.color.charAt(0)=="#" ) {
-                // htmlfied_alternode = '<li>'+ n.label+ '</li>';
                 sameNodes.push('<li>'+ n.label+ '</li>')
             }
         }
     }
-    // groupA = elems
-    // groupB = []
-
-    // pr("\n==============")
-    // pr("[[[[ inside getSameNeighbors ]]]]")
-    // printStates();
-
-    // if(swclickActual=="social") groupB = getNeighs(elems, nodes1);
-    // if(swclickActual=="semantic") groupB = getNeighs(elems, nodes2);
-    // if(swclickActual=="sociosemantic") {
-    //     groupB = getNeighs(elems, nodes2);
-    // }
-
-    // pr("\tgroupA:")
-    // pr(groupA)
-    // pr("\tgroupB:")
-    // pr(groupB)
-
-    // var diff = []
-    // var xxx = false;
-
-    // for (var b in groupB) {
-    //     n = groupB[b]
-    //     if( selections[n] && selections[n]==1 ) {
-    //         xxx = false;
-    //     } else {
-    //         diff.push(n);
-    //     }
-    // }
-    // pr("\tdifference")
-    // pr(diff)
-    
-    // pr("===============\n")
-    // groupB = getNeighs(elems, nodes1);
-
-    // neigh
-    // for(var i in elems){
-    //     ID = elems[i]
-    //     pr(ID)
-
-    //     // // htmlfied_alternode = '<span class="tagcloud-item" style="font-size:'+fontSize+'px;" '+js1+id+js2+'>'+ Nodes[id].label+ '</span>';
-    //     // htmlfied_alternode = "html stuff"
-    //     // sameNodes.push(htmlfied_alternode)
-    // }
     return sameNodes
 }
 
