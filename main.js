@@ -21,6 +21,7 @@ if (mainfile) {
                 bringTheNoise( filename , "mono");
                 
             } else {
+                listGexfs();
         		parse(getUrlParam.file);
         		nb_cats = scanCategories();  
         		pr("nb_cats: "+nb_cats);
@@ -32,7 +33,8 @@ if (mainfile) {
         		    if(!isUndef(gexfDict[getUrlParam.file])){
         		        $("#currentGraph").html(gexfDict[getUrlParam.file]);
         		    } else $("#currentGraph").html(getUrlParam.file);
-        		    // scanDataFolder();
+        		    scanDataFolder();
+                    listGexfs();
         		});            
             }
 	    });
@@ -214,6 +216,10 @@ function bringTheNoise(pathfile,type){
     // < === EXTRACTING DATA === >
     if(mainfile) {
         pr("mainfile: "+mainfile)
+        
+        if(gexfDict[pathfile]) $("#network").html(gexfDict[pathfile]);
+        else $("#network").html(pathfile);
+
 	    parse(decodeURIComponent(pathfile));
 
 	    if(type=="mono") {
@@ -240,6 +246,7 @@ function bringTheNoise(pathfile,type){
             pr(partialGraph._core.graph.nodes.length)
             pr(partialGraph._core.graph.edges.length)
         }
+
 
         partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, 0.8).draw(2,2,2);
         theListeners(); 
