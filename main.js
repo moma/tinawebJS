@@ -93,7 +93,6 @@ function sigmaLimits(){
 function bringTheNoise(pathfile,type){
     
     $("#semLoader").hide();
-    $('#modalloader').modal('show');
 
 
     // $('.selectpicker').selectpicker();
@@ -220,6 +219,7 @@ function bringTheNoise(pathfile,type){
         if(gexfDict[pathfile]) $("#network").html(gexfDict[pathfile]);
         else $("#network").html(pathfile);
 
+    	// $('#modalloader').modal('show');
 	    parse(decodeURIComponent(pathfile));
 
 	    if(type=="mono") {
@@ -262,6 +262,8 @@ function bringTheNoise(pathfile,type){
       // 
         var theurl,thedata,thename;
 
+    	$('#modalloader').modal('show');
+    	
 	    if(type=="unique_id") {
 		    pr("bring the noise, case: unique_id");
             pr(getClientTime()+" : DataExt Ini");
