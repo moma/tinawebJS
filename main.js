@@ -216,15 +216,15 @@ function bringTheNoise(pathfile,type){
     // < === EXTRACTING DATA === >
     if(mainfile) {
         pr("mainfile: "+mainfile)
-        
+
         if(gexfDict[pathfile]) $("#network").html(gexfDict[pathfile]);
         else $("#network").html(pathfile);
 
 	    parse(decodeURIComponent(pathfile));
 
 	    if(type=="mono") {
-	    	$("#changetype").hide();
 
+	    	$("#changetype").hide();
 
             if( pathfile.indexOf(".json") > -1 ) {
                 JSONFile( pathfile )
@@ -233,6 +233,12 @@ function bringTheNoise(pathfile,type){
             }
 
             pushSWClick("social");
+
+            $("#taboppos").remove();
+            $.doTimeout(500,function (){
+                $('.etabs a[href="#tabs2"]').trigger('click');
+            });
+
             pr(partialGraph._core.graph.nodes.length)
             pr(partialGraph._core.graph.edges.length)
 	    } 

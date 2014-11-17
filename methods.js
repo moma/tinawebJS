@@ -457,7 +457,10 @@ function updateLeftPanel_fix() {
     $("#sameNodes").html(sameNodesDIV).readmore({maxHeight:200}); 
     $("#information").html(informationDIV);
     $("#tips").html("");
-    // $("#topPapers").show();
+
+    if(categoriesIndex.length==1) getTopPapers("semantic");
+    else getTopPapers(swclickActual);
+    
 }
 
 function printStates() {
