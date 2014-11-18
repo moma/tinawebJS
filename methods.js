@@ -153,7 +153,10 @@ function RefreshState(newNOW){
                 NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
                 
             });
-        } else $("#semLoader").show();
+        } else {
+            $("#semLoader").css('visibility', 'visible');
+            $("#semLoader").show();
+        }
 
     }
     if(NOW=="AaBb"){
@@ -614,17 +617,19 @@ function markAsSelected(n_id,sel) {
                     for(var i in neigh){
 
                         vec = partialGraph._core.graph.nodesIndex[neigh[i]];
-                        vec.color = vec.attr['true_color'];
-                        vec.attr['grey'] = 0;
-                        an_edge=partialGraph._core.graph.edgesIndex[vec.id+";"+nodeSel.id];
-                        if(!isUndef(an_edge) && !an_edge.hidden){
-                            an_edge.color = an_edge.attr['true_color'];
-                            an_edge.attr['grey'] = 0;
-                        }
-                        an_edge=partialGraph._core.graph.edgesIndex[nodeSel.id+";"+vec.id];
-                        if(!isUndef(an_edge) && !an_edge.hidden){
-                            an_edge.color = an_edge.attr['true_color'];
-                            an_edge.attr['grey'] = 0;
+                        if(vec) {
+                            vec.color = vec.attr['true_color'];
+                            vec.attr['grey'] = 0;
+                            an_edge=partialGraph._core.graph.edgesIndex[vec.id+";"+nodeSel.id];
+                            if(!isUndef(an_edge) && !an_edge.hidden){
+                                an_edge.color = an_edge.attr['true_color'];
+                                an_edge.attr['grey'] = 0;
+                            }
+                            an_edge=partialGraph._core.graph.edgesIndex[nodeSel.id+";"+vec.id];
+                            if(!isUndef(an_edge) && !an_edge.hidden){
+                                an_edge.color = an_edge.attr['true_color'];
+                                an_edge.attr['grey'] = 0;
+                            }
                         }
                     }
                 }
@@ -1751,6 +1756,7 @@ function changeToMacro(iwannagraph) {
         partialGraph.draw();
         partialGraph.refresh();
         
+        $("#semLoader").css('visibility', 'visible');
         $("#semLoader").show();
 
         return;
