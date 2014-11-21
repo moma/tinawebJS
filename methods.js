@@ -356,16 +356,22 @@ function htmlfied_alternodes(elems) {
     return oppositesNodes
 }
 
+function manualForceLabel(nodeid,active) {
+	// pr("manual|"+nodeid+"|"+active)
+	partialGraph._core.graph.nodesIndex[nodeid].active=active;
+	partialGraph.draw();
+}
 
 function htmlfied_samenodes(elems) {
     var sameNodes=[]
-
+    js1=' onmouseover="manualForceLabel(this.id,true);" ';
+    js2=' onmouseout="manualForceLabel(this.id,true);" ';
     if(elems.length>0) {
         var A = getVisibleNodes()
         for (var a in A){
             n = A[a]
             if(!n.active && n.color.charAt(0)=="#" ) {
-                sameNodes.push('<li>'+ n.label+ '</li>')
+                sameNodes.push('<li onmouseover="manualForceLabel(\''+n.id+'\',true)"  onmouseout="manualForceLabel(\''+n.id+'\',false)" >'+ n.label+ '</li>')
             }
         }
     }
