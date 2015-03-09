@@ -371,7 +371,7 @@ function htmlfied_samenodes(elems) {
         for (var a in A){
             n = A[a]
             if(!n.active && n.color.charAt(0)=="#" ) {
-                sameNodes.push('<li onmouseover="manualForceLabel(\''+n.id+'\',true)"  onmouseout="manualForceLabel(\''+n.id+'\',false)" >'+ n.label+ '</li>')
+                sameNodes.push('<li onmouseover="manualForceLabel(\''+n.id+'\',true)"  onmouseout="manualForceLabel(\''+n.id+'\',false)" ><a>'+ n.label+ '</a></li>')
             }
         }
     }
