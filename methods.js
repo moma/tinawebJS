@@ -150,7 +150,7 @@ function RefreshState(newNOW){
             $("#category-B").show();
             $.doTimeout(30,function (){
                 EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-                NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+                NodeWeightFilter ( "#sliderBNodeWeight"  , "NGram", "type" , "size");
                 
             });
         } else {
@@ -391,9 +391,11 @@ function htmlfied_nodesatts(elems){
         var node = Nodes[id]
 
         if (mainfile) {
-            information += '<li><b>' + node.label + '</b></li>';
+            google='<a href=http://www.google.com/#hl=en&source=hp&q=%20'+node.label.replace(" ","+")+'%20>';
+            information += '<li><b>'+ google + node.label + '</a></b></li>';
             for (var i in node.attributes) {
-                information += '<li>&nbsp;&nbsp;'+i +" : " + node.attributes[i] + '</li>';
+                if(i=="cluster_label")
+                    information += '<li>&nbsp;&nbsp;'+i +" : " + node.attributes[i] + '</li>';
             }
             socnodes.push(information);
         } else {
@@ -434,7 +436,7 @@ function updateLeftPanel_fix() {
     // var alternodesname=getNodeLabels(opos)
 
     namesDIV+='<div id="selectionsBox"><h4>';
-    namesDIV+= getNodeLabels( selections ).join(', ')//aqui limitar
+    namesDIV+= getNodeLabels( selections ).join(' <b>/</b> ')//aqui limitar
     namesDIV += '</h4></div>';
 
     if(opos.length>0) {
@@ -1628,7 +1630,7 @@ function changeToMeso(iwannagraph) {
         
         $("#category-B").show();
         EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-        NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+        NodeWeightFilter ( "#sliderBNodeWeight"  , "NGram", "type" , "size");
         $("#colorGraph").hide();
     }
      
@@ -1736,16 +1738,16 @@ function changeToMeso(iwannagraph) {
         
         $("#category-B").show();
         EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-        NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+        NodeWeightFilter ( "#sliderBNodeWeight"  , "NGram", "type" , "size");
         // EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
         // NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size") 
         $("#colorGraph").hide();
     }
 
-    fa2enabled=true; partialGraph.startForceAtlas2();
 
     MultipleSelection(Object.keys(selections) , false);//false-> dont apply deselection algorithm
-
+    partialGraph.zoomTo(partialGraph._core.width / 2, partialGraph._core.height / 2, 0.8);
+    fa2enabled=true; partialGraph.startForceAtlas2();
     $('.gradient').css({"background-size":"90px 90px"});
 }
 
@@ -1787,7 +1789,7 @@ function changeToMacro(iwannagraph) {
         else {
             $("#category-B").show();
             EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-            NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+            NodeWeightFilter ( "#sliderBNodeWeight"  , "NGram", "type" , "size");
         }
         swMacro=true;
 

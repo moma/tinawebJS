@@ -1151,11 +1151,21 @@ sigma.publicPrototype.startForceAtlas2 = function() {
 };
 
 sigma.publicPrototype.stopForceAtlas2 = function() {
-
-  // pr("\t\t\t\t\tFA2 Stopped")
+  if(this.forceatlas2) {
+    if(this.forceatlas2.count) {
+      pr("\t\t\t\t\tFA2 Stopped: "+this.forceatlas2.count)
+      if(swMacro && this.forceatlas2.count>2) {
+        var thenodes = partialGraph._core.graph.nodesIndex;
+        for(var i in thenodes){
+          Nodes[i].x = thenodes[i].x
+          Nodes[i].y = thenodes[i].y
+        }
+      }
+    }
+    this.forceatlas2.active=false;
+    this.forceatlas2.count=0;
+  }
   this.removeGenerator('forceatlas2');
-  this.forceatlas2.active=false;
-  this.forceatlas2.count=0;
   updateMap();
   partialGraph.refresh();
   if(minimap) $("#overviewzone").show();

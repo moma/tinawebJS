@@ -126,7 +126,7 @@ function bringTheNoise(pathfile,type){
     	pr("")
     	pr(" ############  changeTYPE click");
 		printStates()
-
+        partialGraph.stopForceAtlas2();
         changeType();
 
         $.doTimeout(500,function (){
@@ -625,22 +625,26 @@ function theListeners(){
     
 
 
-    //  finished but not used
-    //  NodeWeightFilter ( "#sliderANodeWeight" ,  "Document" , "type" , "size")
-    $("#sliderANodeWeight").freshslider({
-        range: true,
-        step:1,
-        value:[10, 60],
-        enabled: false,
-        onchange:function(low, high){
-            console.log(low, high);
-        }
-    });
+    // //  finished but not used
+    // //  NodeWeightFilter ( "#sliderANodeWeight" ,  "Document" , "type" , "size")
+    // $("#sliderANodeWeight").freshslider({
+    //     range: true,
+    //     step:1,
+    //     value:[10, 60],
+    //     enabled: false,
+    //     onchange:function(low, high){
+    //         console.log(low, high);
+    //     }
+    // });
 
     //  finished
     //this should be available at start!!
     // pr("applying edge weith filter")
-    EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
+    NodeWeightFilter ( "#sliderANodeWeight" ,  "Document",  "type" ,"size");
+
+    $.doTimeout(2000,function (){
+        EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
+    });
 
 
     //finished
@@ -687,7 +691,6 @@ function theListeners(){
     // NodeWeightFilter ( "#sliderBNodeWeight" ,  "NGram" , "type" , "size") 
 
     // EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-    
     
     //finished
     $("#unranged-value").freshslider({
@@ -836,7 +839,7 @@ function SigmaLayouting( URL, DATA, NAME) {
                                 // $("#sliderBNodeWeight").html("");
                                 $("#category-B").show();
                                 EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
-                                NodeWeightFilter ( "#sliderBNodeWeight" , "type" , "NGram" , "size");
+                                NodeWeightFilter ( "#sliderBNodeWeight"  , "NGram", "type" , "size");
                                 $("#colorGraph").hide();
                             
                                 

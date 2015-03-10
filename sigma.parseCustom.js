@@ -518,7 +518,7 @@ function fullExtract(){
             Edges[indice] = edge;
             
             // if(idS==idT)
-           	// 	pr(edge.sourceID+"|"+idS+" <-> "+idT+"|"+edge.targetID)
+           		// pr(edge.sourceID+"|"+idS+" <-> "+idT+"|"+edge.targetID)
 
             if(idS==catSoc && idT==catSoc){  
                 // pr("anything here?")
@@ -540,7 +540,7 @@ function fullExtract(){
                 nodes1[source].neighbours.push(target);
                 nodes1[target].neighbours.push(source);
 
-                // partialGraph.addEdge(indice,source,target,edge);
+                partialGraph.addEdge(indice,source,target,edge);
             }
             
             

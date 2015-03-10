@@ -165,7 +165,11 @@ function changeLevel() {
 //	EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
 //	EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
 function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
-
+    pr("===========================")
+    pr("IN EdgeWeightFilter()")
+    pr($(sliderDivID).html())
+    pr(partialGraph._core.graph.edges.length)
+    pr("===========================")
 	if ($(sliderDivID).html()!="") {
 		pr("\t\t\t\t\t\t[[ algorithm not applied "+sliderDivID+" ]]")
 		return;
@@ -295,9 +299,10 @@ function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
                                 // pr("deleting "+ids.join())
                                 for(var id in ids) {
                                     ID = ids[id]
-                                    if(!isUndef(gete(ID)))
+                                    if(!isUndef(gete(ID))) {
                                         partialGraph.dropEdge(ID)
-                                    Edges[ID].lock = true;
+                                        Edges[ID].lock = true;
+                                    }
                                     // pr("\tDEL "+ID)
                                     // pr("removeedge")
                                 }
@@ -368,7 +373,8 @@ function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
         return;
     }
 
-    var filterparams = AlgorithmForSliders ( Nodes , type_attrb , type , criteria) 
+    var filterparams = AlgorithmForSliders ( Nodes , type , type_attrb , criteria) 
+
     var steps = filterparams["steps"]
     var finalarray = filterparams["finalarray"]
     
@@ -440,6 +446,8 @@ function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
 function AlgorithmForSliders( elements , type_attrb , type , criteria) {
 	// //  ( 1 )
     // // get visible sigma nodes|edges
+
+
     var elems = [];/*=elements.filter(function(e) {
                 return e[type_attrb]==type;
     });*/
