@@ -463,7 +463,7 @@ function fullExtract(){
     //Edges
     var edgeId = 0;
     var edgesNodes = gexf.getElementsByTagName('edges');
-    for(i=0; i<edgesNodes.length; i++){
+    for(i=0; i<edgesNodes.length; i++) {
         var edgesNode = edgesNodes[i];
         var edgeNodes = edgesNode.getElementsByTagName('edge');
         for(j=0; j<edgeNodes.length; j++){
@@ -612,6 +612,14 @@ function fullExtract(){
 
         }
     }
+
+    $.doTimeout(1000,function (){
+        fa2enabled=true; partialGraph.startForceAtlas2();
+        $.doTimeout(4000,function (){
+            partialGraph.stopForceAtlas2();
+        });
+    });
+
 }
 
 

@@ -165,11 +165,6 @@ function changeLevel() {
 //	EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
 //	EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
 function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
-    pr("===========================")
-    pr("IN EdgeWeightFilter()")
-    pr($(sliderDivID).html())
-    pr(partialGraph._core.graph.edges.length)
-    pr("===========================")
 	if ($(sliderDivID).html()!="") {
 		pr("\t\t\t\t\t\t[[ algorithm not applied "+sliderDivID+" ]]")
 		return;

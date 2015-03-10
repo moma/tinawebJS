@@ -642,9 +642,7 @@ function theListeners(){
     // pr("applying edge weith filter")
     NodeWeightFilter ( "#sliderANodeWeight" ,  "Document",  "type" ,"size");
 
-    $.doTimeout(2000,function (){
-        EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
-    });
+    EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
 
 
     //finished
@@ -703,14 +701,6 @@ function theListeners(){
             cursor_size=value;
             if(cursor_size==0) partialGraph.draw();
         }
-    });
-
-
-    $.doTimeout(5,function (){
-        fa2enabled=true; partialGraph.startForceAtlas2();
-        $.doTimeout(5,function (){
-            partialGraph.stopForceAtlas2();
-        });
     });
 
 }
