@@ -4,7 +4,7 @@
 
 function changeType() {
     pr("***swclickActual:"+swclickActual+" , swMacro:"+swMacro);
-    
+
     if(swclickActual=="social") {
         if(swMacro) {
             changeToMacro("semantic");
@@ -161,6 +161,29 @@ function changeLevel() {
 //=========================== < FILTERS-SLIDERS > ===========================//
 
 
+function NodeSizeSlider(sliderDivID, myType, myValue, myColor) {
+    $(sliderDivID).html()
+    $(sliderDivID).freshslider({
+        step:1,
+        min:1,
+        max:25,
+        value:myValue,
+        bgcolor:myColor,
+        onchange:function(value){
+            $.doTimeout(100,function (){
+                   partialGraph.iterNodes(function (n) {
+                       if(Nodes[n.id].type==myType) {
+                           n.size = parseFloat(Nodes[n.id].size) + parseFloat((value-1))*0.3;
+                           sizeMult[myType] = parseFloat(value-1)*0.3;
+                       }
+                   });
+                   partialGraph.draw();
+            });
+        }
+    });
+}
+
+
 //    Execution modes:
 //	EdgeWeightFilter("#sliderAEdgeWeight", "label" , "nodes1", "weight");
 //	EdgeWeightFilter("#sliderBEdgeWeight", "label" , "nodes2", "weight");
@@ -194,15 +217,15 @@ function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
         return;
     }
 
-    var filterparams = AlgorithmForSliders ( Edges , type_attrb , type , criteria) 
+    var filterparams = AlgorithmForSliders ( Edges , type_attrb , type , criteria)
     var steps = filterparams["steps"]
     var finalarray = filterparams["finalarray"]
-    
+
 
     var lastvalue=("0-"+(steps-1));
 
     pushFilterValue( sliderDivID , lastvalue )
-    
+
     //finished
     $(sliderDivID).freshslider({
         range: true,
@@ -261,14 +284,14 @@ function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
 
                     // do the important stuff
                     for( var c in iterarr ) {
-                        
+
                         var i = iterarr[c];
                         ids = finalarray[i]
 
                         if(i>=low && i<=high) {
                             if(addflag) {
                                 // pr("adding "+ids.join())
-                                for(var id in ids) {                            
+                                for(var id in ids) {
                                     ID = ids[id]
                                     Edges[ID].lock = false;
 
@@ -286,7 +309,7 @@ function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
                                             }
                                         }
                                     }
-                                    
+
                                 }
                             }
 
@@ -325,24 +348,24 @@ function EdgeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
                 });
                 pushFilterValue( sliderDivID , filtervalue )
             }
-            
+
         }
     });
-    
+
 }
 
 
 
 //   Execution modes:
-// NodeWeightFilter ( "#sliderANodeWeight" ,  "Document" , "type" , "size") 
-// NodeWeightFilter ( "#sliderBNodeWeight" ,  "NGram" , "type" , "size") 
+// NodeWeightFilter ( "#sliderANodeWeight" ,  "Document" , "type" , "size")
+// NodeWeightFilter ( "#sliderBNodeWeight" ,  "NGram" , "type" , "size")
 function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
 
 	if ($(sliderDivID).html()!="") {
 		pr("\t\t\t\t\t\t[[ algorithm not applied "+sliderDivID+" ]]")
 		return;
 	}
-    
+
 	// sliderDivID = "#sliderAEdgeWeight"
 	// type = "nodes1"
 	// type_attrb = "label"
@@ -368,10 +391,10 @@ function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
         return;
     }
 
-    var filterparams = AlgorithmForSliders ( Nodes , type_attrb , type , criteria) 
+    var filterparams = AlgorithmForSliders ( Nodes , type_attrb , type , criteria)
     var steps = filterparams["steps"]
     var finalarray = filterparams["finalarray"]
-    
+
     //finished
     $(sliderDivID).freshslider({
         range: true,
@@ -380,9 +403,9 @@ function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
         max:steps-1,
         bgcolor:(type_attrb=="Document")?"#27c470":"#FFA500" ,
         value:[0,steps-1],
-        onchange:function(low, high){    
+        onchange:function(low, high){
             var filtervalue = low+"-"+high
-            
+
             if(filtervalue!=lastFilter[sliderDivID]) {
                 if(lastFilter[sliderDivID]=="-") {
                     pushFilterValue( sliderDivID , filtervalue )
@@ -408,7 +431,7 @@ function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
                             Nodes[ID].lock = true;
                             if(partialGraph._core.graph.nodesIndex[ID])
                                 partialGraph._core.graph.nodesIndex[ID].hidden = true;
-                        }                     
+                        }
                     }
                 }
                 pushFilterValue(sliderDivID,filtervalue)
@@ -426,17 +449,17 @@ function NodeWeightFilter(sliderDivID , type_attrb , type ,  criteria) {
                 });
                 // [ / Starting FA2 ]
             }
-            
+
         }
     });
 
 }
 
 //   Execution modes:
-// AlgorithmForSliders ( partialGraph._core.graph.edges , "label" , "nodes1" , "weight") 
-// AlgorithmForSliders ( partialGraph._core.graph.edges , "label" , "nodes2" , "weight") 
-// AlgorithmForSliders ( partialGraph._core.graph.nodes , "type" ,  "Document" ,  "size") 
-// AlgorithmForSliders ( partialGraph._core.graph.nodes , "type" ,  "NGram" ,  "size") 
+// AlgorithmForSliders ( partialGraph._core.graph.edges , "label" , "nodes1" , "weight")
+// AlgorithmForSliders ( partialGraph._core.graph.edges , "label" , "nodes2" , "weight")
+// AlgorithmForSliders ( partialGraph._core.graph.nodes , "type" ,  "Document" ,  "size")
+// AlgorithmForSliders ( partialGraph._core.graph.nodes , "type" ,  "NGram" ,  "size")
 function AlgorithmForSliders( elements , type_attrb , type , criteria) {
 	// //  ( 1 )
     // // get visible sigma nodes|edges
@@ -448,11 +471,11 @@ function AlgorithmForSliders( elements , type_attrb , type , criteria) {
         // pr(elements[e])
         // pr("\t"+type_attrb)
         if( elements[e][type_attrb]==type )
-            elems.push(elements[e]) 
+            elems.push(elements[e])
     }
 
     // //  ( 2 )
-    // // extract [ "edgeID" : edgeWEIGHT ] | [ "nodeID" : nodeSIZE ] 
+    // // extract [ "edgeID" : edgeWEIGHT ] | [ "nodeID" : nodeSIZE ]
     // // and save this into edges_weight | nodes_size
     var elem_attrb=[]
     for (var i in elems) {
@@ -496,12 +519,12 @@ function AlgorithmForSliders( elements , type_attrb , type , criteria) {
     var stepsize = Math.round( N / steps );
 
     // pr("-----------------------------------")
-    // pr("number of visible nodes|edges: "+N); 
-    
+    // pr("number of visible nodes|edges: "+N);
+
     // pr("number of steps : "+steps)
     // pr("size of one step : "+stepsize)
     // pr("-----------------------------------")
-    
+
 
     var finalarray = []
     var counter=0
@@ -530,10 +553,10 @@ function AlgorithmForSliders( elements , type_attrb , type , criteria) {
 
 
 //============================= < SEARCH > =============================//
-function updateSearchLabels(id,name,type){    
+function updateSearchLabels(id,name,type){
     labels.push({
         'id' : id,
-        'label' : name, 
+        'label' : name,
         'desc': type
     });
 }
@@ -541,7 +564,7 @@ function updateSearchLabels(id,name,type){
 function extractContext(string, context) {
     var matched = string.toLowerCase().indexOf(context.toLowerCase());
 
-    if (matched == -1) 
+    if (matched == -1)
         return string.slice(0, 20) + '...';
 
     var begin_pts = '...', end_pts = '...';
@@ -568,10 +591,10 @@ function extractContext(string, context) {
     return begin_pts + str + end_pts;
 }
 
-function searchLabel(string){    
+function searchLabel(string){
     var id_node = '';
     var n;
-    
+
     nds = partialGraph._core.graph.nodes.filter(function(x){return !x["hidden"]});
     for(var i in nds){
         n = nds[i]
@@ -588,7 +611,7 @@ function search(string) {
     var coincd=[]
     for(var i in results) {
         coincd.push(results[i].id)
-    }    
+    }
     $.doTimeout(30,function (){
         MultipleSelection(coincd , true);
         $("input#searchinput").val("");

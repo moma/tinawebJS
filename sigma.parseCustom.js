@@ -620,7 +620,7 @@ function fullExtract(){
 function JSONFile( URL ) {
 
 
-    
+    console.warn('URL:', url) ;
     return $.ajax({
         type: 'GET',
         url: URL,
@@ -637,6 +637,8 @@ function JSONFile( URL ) {
             parseSimpleJSON(data,seed)
         },
         error: function(){ 
+	    console.log("lalalala")
+	    console.log( URL )
             pr("Page Not found. parseCustom, inside the IF");
         }
     });

@@ -52,7 +52,7 @@ function isUndef(variable){
 
 $.fn.toggleClick = function(){
         methods = arguments, // store the passed arguments for future reference
-            count = methods.length; // cache the number of methods 
+            count = methods.length; // cache the number of methods
 
         //use return this to maintain jQuery chainability
         return this.each(function(i, item){
@@ -66,7 +66,7 @@ $.fn.toggleClick = function(){
 };
 
 
-getUrlParam = (function () {
+ourGetUrlParam = (function () {
     var get = {
         push:function (key,value){
             var cur = this[key];
@@ -79,17 +79,54 @@ getUrlParam = (function () {
             }
         }
     },
-    search = document.location.search,
-    decode = function (s,boo) {
-        var a = decodeURIComponent(s.split("+").join(" "));
-        return boo? a.replace(/\s+/g,''):a;
+    decode = function (s, rmSpaceFlag) {
+        s = decodeURIComponent(s.replace(/\+/g, ' '));
+        return rmSpaceFlag ? s.replace(/\s+/g,'') : s;
     };
-    search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function (a,b,c) {
-        if (get[decode(b,true)]){
-            get.push(decode(b,true),decode(c));
-        }else {
-            get[decode(b,true)] = decode(c);
+    document.location.search.replace(
+               /\??(?:([^=]+)=(?:%22(.*?)%22|"([^"]*)"|([^&]*))&?)/g,
+            //        ^^^^^^^       ^^^^^   | ^^^^^^^ |^^^^^^^
+            //          key     valUrlquoted|valQuoted|valRaw
+            //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            //                       wholeMatch
+
+            function (wholeMatch,key,valUrlquoted,valQuoted,valRaw) {
+
+        // exemple
+        // -------
+        // wholeMatch:      ?type=%22filter%22&
+        // key:             type
+        // valUrlquoted:    filter
+
+        // debug
+        // -----
+        // console.log("getUrlParam re vars wholeMatch  :", wholeMatch)
+        // console.log("getUrlParam re vars key         :", key)
+        // console.log("getUrlParam re vars valUrlquoted:", valUrlquoted)
+        // console.log("getUrlParam re vars valQuoted   :", valQuoted)
+        // console.log("getUrlParam re vars valRaw      :", valRaw)
+
+        var val = ""
+        if (typeof valUrlquoted != "undefined") {
+            val = valUrlquoted
         }
+        else if (typeof valQuoted != "undefined") {
+            val = valQuoted
+        }
+        else {
+            val = valRaw
+        }
+
+        if (get[decode(key,true)]){
+            get.push(decode(key,true),decode(val));
+        }else {
+            get[decode(key,true)] = decode(val);
+        }
+
+        // debug
+        // -----
+        // console.log("getUrlParam output dict:\n  ", JSON.stringify(get))
+
     });
     return get;
 })();
@@ -102,7 +139,7 @@ function ArraySortByValue(array, sortFunc){
     for (var k in array) {
         if (array.hasOwnProperty(k)) {
             tmp.push({
-                key: k, 
+                key: k,
                 value:  array[k]
             });
             if((array[k]) > oposMAX) oposMAX= array[k];
@@ -111,8 +148,8 @@ function ArraySortByValue(array, sortFunc){
 
     tmp.sort(function(o1, o2) {
         return sortFunc(o1.value, o2.value);
-    });   
-    return tmp;      
+    });
+    return tmp;
 }
 
 
@@ -122,7 +159,7 @@ function ArraySortByKey(array, sortFunc){
     for (var k in array) {
         if (array.hasOwnProperty(k)) {
             tmp.push({
-                key: k, 
+                key: k,
                 value:  array[k]
             });
         }
@@ -130,10 +167,10 @@ function ArraySortByKey(array, sortFunc){
 
     tmp.sort(function(o1, o2) {
         return sortFunc(o1.key, o2.key);
-    });   
-    return tmp;      
+    });
+    return tmp;
 }
-    
+
 
 function is_empty(obj) {
     // Assume if it has a length property with a non-zero value
